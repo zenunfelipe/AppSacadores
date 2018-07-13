@@ -151,7 +151,17 @@ ion-content.home {
 .home a.activated img {
 	border: 4px solid #FF0000;
 }
-
+.popup {
+	zoom: 2;
+}
+.popup-body {
+	line-height: 25px;
+}
+.popup-body span {
+	line-height: 25px;
+	font-size: 15px;
+}
+.popup-body .rojo { color: red; line-height: 25px; }
 /* COTIZAR */
 ion-content.cotizar {
 	padding-top: 70px;

@@ -580,7 +580,7 @@ angular.module('samsungcot.controllers', [])
                   if (data.data[0].hasOwnProperty("Nombre")) {
                      var confirmPopup = $ionicPopup.confirm({
                       title: 'Terminar',
-                      template: 'Agregar: '+data.data[0].Nombre,
+                      template: '<center><b>Agregando<br />'+data.data[0].Nombre+(!data.data2[0].hasOwnProperty("msgError") ? (data.data2[0].Columna != "" ? '<br /><span class="rojo">Ubic. Actual<br />'+data.data2[0].Ubicacion+'<br />REVISA LA UBICACION</span>' : '') : '')+'</b></center>',
                       buttons: [{ 
                         text: 'NO',
                         type: 'button-default',
@@ -676,7 +676,7 @@ angular.module('samsungcot.controllers', [])
   }
   
   $scope.leerColumna = function() {
-    
+    /*
     cordova.plugins.barcodeScanner.scan(
       function (result) {
           $scope.dale(result.text);
@@ -698,8 +698,8 @@ angular.module('samsungcot.controllers', [])
           disableSuccessBeep: false // iOS and Android
       }
     );
-    
-    //$scope.dale("01A0101");
+    */
+    $scope.dale("01A0101");
   }
 
   $scope.dale = function(text) {
