@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<widget id="com.andes.ag" version="0.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>Andes</name>
+  <description>
+        Andes
+    </description>
+  <author email="rosses@andesindustrial.cl" href="http://www.andesindustrial.cl/">
+      TI Andes
+  </author>
+  <plugin name="cordova-plugin-whitelist" version="1" />
+  
+  <content src="index.html"/>
+  <access origin="*"/>
+  
+  <preference name="phonegap-version" value="cli-7.1.0" />
+  <preference name="webviewbounce" value="false"/>
+  <preference name="UIWebViewBounce" value="false"/>
+  <preference name="DisallowOverscroll" value="true"/>
+  <preference name="SplashScreenDelay" value="2000"/>
+  <preference name="FadeSplashScreenDuration" value="2000"/>
+  <preference name="android-minSdkVersion" value="23"/>
+  <preference name="BackupWebStorage" value="none"/>
+  <preference name="permissions" value="none"/>
+  <preference name="Orientation" value="portrait" />
+
+  <preference name="StatusBarOverlaysWebView" value="true" />
+  <preference name="StatusBarStyle" value="lightcontent" />
+
+  <preference name="android-build-tool" value="gradle" />
+
+  <feature name="StatusBar">
+    <param name="ios-package" value="CDVStatusBar" onload="true"/>
+  </feature>
+
+  <plugin name="cordova-plugin-geolocation"/>
+  <plugin name="cordova-plugin-globalization"/>
+  <plugin name="cordova-plugin-inappbrowser"/>
+  <plugin name="cordova-plugin-dialogs"/>
+  <plugin name="cordova-plugin-camera"/>
+  <plugin name="cordova-plugin-media-capture"/>
+
+  <preference name="exit-on-suspend" value="false"/>
+  <preference name="android-windowSoftInputMode" value="stateHidden|adjustResize" />
+
+  <allow-intent href="http://*/*"/>
+  <allow-intent href="https://*/*"/>
+  <allow-intent href="tel:*"/>
+  <allow-intent href="sms:*"/>
+  <allow-intent href="mailto:*"/>
+  <allow-intent href="geo:*"/>
+  <allow-navigation href="*" />
+
+  <platform name="android">
+    <allow-intent href="market:*"/>
+  </platform>
+  <platform name="ios">
+    <allow-intent href="itms:*"/>
+    <allow-intent href="itms-apps:*"/>
+    <config-file parent="UIBackgroundModes" target="*-Info.plist">
+      <array>
+        <string>bluetooth-central</string>
+      </array>
+    </config-file>
+  </platform>
+  <plugin name="cordova-plugin-statusbar" />
+  <plugin name="cordova-custom-config" spec="1.2.6"/>
+  <plugin name="cordova-plugin-dialogs" spec="1.2.1"/>
+  <plugin name="phonegap-plugin-barcodescanner">
+    <param name="CAMERA_USAGE_DESCRIPTION" value="Lector Andes"/>
+  </plugin>
+  <plugin name="cordova-plugin-bluetooth-serial">
+    <param name="BLUETOOTH_USAGE_DESCRIPTION" value="Impresoras Andes"/>
+  </plugin>
+
+  <icon src="icon.png" />
+  <splash src="splash.png" />
+</widget>

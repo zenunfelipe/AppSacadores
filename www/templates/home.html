@@ -1,0 +1,20 @@
+<ion-view view-title="PointSale Mobile">
+  <ion-content class="home" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
+    <h3>Bienvenido a PointSale</h3>
+
+    <h5>Selecciona una herramienta para comenzar</h5>
+    
+    <div class="row">
+      <div class="col col-33">
+        <a ng-click="goCompras();"><img src="img/cargo.png" /> <br /> Compras</a>
+      </div>
+      <div class="col col-33">
+        <a ng-click="goCotizar();"><img src="img/pos.png" /> <br /> Cotizador </a>
+      </div>
+      <div class="col col-33">
+        <a ng-click="goInventario();"><img src="img/warehouse.png" /> <br />  Inventario</a>
+      </div>
+    </div>
+
+  </ion-content>
+</ion-view>

@@ -1,0 +1,23 @@
+<ion-view view-title="Agregar producto" class="addProducto">
+  <ion-content>
+    <ion-list>
+       <!--<ion-item ng-repeat="item in resList" >-->
+        <div class="item" ng-repeat="item in resList">
+         <div class="row">
+        	<div class="col col-50 wrap-text"><div class="d"><b>{{item.descripcion}}</b></div><br /><div class="azul">Stock: {{item.stock}}</div></div>
+          <div class="col col-25"><div class="negro">$ {{item.precio | number:0}}</div></div>
+          <div class="col col-25 text-right"><button ng-click="agregarSeleccion(item)" class="button button-small button-assertive">Agregar</button></div>
+         </div>
+        </div>
+      </ion-item>
+    </ion-list>
+    <br />
+    <!--
+    <div class="text-center">
+	    <button ng-click="agregarSeleccion()" class="button button-assertive">Agregar</button>
+	    <button ng-click="cancelarAgregar()" class="button button-stable">Cancelar</button>
+	  </div>
+    -->
+    <br /><br /><br />
+  </ion-content>
+</ion-view>
