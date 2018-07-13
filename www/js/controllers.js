@@ -460,7 +460,7 @@ angular.module('samsungcot.controllers', [])
   $scope.volver = function() { $ionicHistory.goBack(); }
 
   $scope.mm = function(x) {
-    return (x.length > 40 ? x.substr(0,40)+"..." : x);
+    return (x.length > 30 ? x.substr(0,30)+"..." : x);
   };
   $scope.showload = function() {
     $ionicLoading.show({
@@ -676,7 +676,7 @@ angular.module('samsungcot.controllers', [])
   }
   
   $scope.leerColumna = function() {
-
+    /*
     cordova.plugins.barcodeScanner.scan(
       function (result) {
           $scope.dale(result.text);
@@ -698,8 +698,8 @@ angular.module('samsungcot.controllers', [])
           disableSuccessBeep: false // iOS and Android
       }
     );
-    
-    //$scope.dale("01A0101");
+    */
+    $scope.dale("01A0101");
   }
 
   $scope.dale = function(text) {
