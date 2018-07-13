@@ -1,5 +1,5 @@
 app = {
-        restApi:  "http://192.168.200.125:8085/bodega/",
+        restApi:  "http://186.67.74.115:8085/bodega/",
         impID: "",
         impNN: "",
         impSERV: "18F0",
@@ -119,6 +119,18 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
     controller: 'MainCtrl'
   })
 
+  .state('col', {
+    url: '/col',
+    templateUrl: 'templates/col.html',
+    controller: 'AndesCtrl',
+    params : {
+      datos: [],
+      pasillo: '',
+      lado: '',
+      columna: ''
+    }
+  }) 
+
   .state('main.home', {
     url: '/home',
     views: {
@@ -144,6 +156,7 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
       reloadPrecios: 0
     }
   })
+
 
   .state('main.add', {
     url: '/add/:search',

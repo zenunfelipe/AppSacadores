@@ -456,6 +456,211 @@ angular.module('samsungcot.controllers', [])
 
 })
 
+.controller('AndesCtrl', function($scope, $ionicPopup, $ionicLoading, $ionicHistory, $localStorage, $state, $rootScope, $location, $stateParams) {
+  $scope.volver = function() { $ionicHistory.goBack(); }
+
+  $scope.mm = function(x) {
+    return (x.length > 40 ? x.substr(0,40)+"..." : x);
+  };
+  $scope.showload = function() {
+    $ionicLoading.show({
+      template: '<ion-spinner></ion-spinner>'
+    }).then(function(){
+       //console.log("The loading indicator is now displayed");
+    });
+  };
+  $scope.hideload = function(){
+    $ionicLoading.hide().then(function(){
+       //console.log("The loading indicator is now hidden");
+    });
+  };
+
+
+  $scope.datos = $stateParams.datos;
+  $scope.columna = $stateParams.columna;
+  $scope.pasillo = $stateParams.pasillo;
+  $scope.fila = $stateParams.fila;
+  $scope.lado = $stateParams.lado;
+  $scope.data = { algo: '' };
+  console.log($scope.datos);
+  if ($scope.datos.length == 0) {
+    $state.go("login");
+  }
+
+  $scope.borrarProducto = function(pasillo,lado,columna, fila,id) {
+
+     var confirmaPopup = $ionicPopup.confirm({
+      title: 'Terminar',
+      template: 'Eliminar producto?: '+id,
+      buttons: [{ 
+        text: 'NO',
+        type: 'button-default',
+        onTap: function(e) {
+          return '0'
+        }
+      }, {
+        text: 'SI',
+        type: 'button-positive',
+        onTap: function(e) {
+          return '1'
+        }
+      }]
+     });
+     confirmaPopup.then(function(res) {
+       if (res==1) {
+        $scope.showload();
+        jQuery.post(app.restApi+'?action=borrar', { pasillo: pasillo, lado: lado, columna: columna, fila: fila, codigo: id }, function(data) {
+          if (data.res == "OK") {
+            var datos = [];
+            var ultimaFila = "";
+            var actual = {fila: "", data: null};
+            for (var i = 0; i < data.data.length ; i++) {
+              if (ultimaFila != data.data[i].Fila) {
+                if (actual.data != null && actual.data.length > 0) {
+                  datos.push(actual);
+                }
+                var actual = {fila: "", data: null};
+                actual.data = [];
+                actual.fila = data.data[i].Fila;
+                actual.data.push(data.data[i]);
+                ultimaFila = data.data[i].Fila;
+              } else {
+                actual.data.push(data.data[i]);
+              }
+            }
+            if (ultimaFila!="") { datos.push(actual); }
+            if (ultimaFila == "01") { 
+              datos.push({fila: "02", data: []});
+              datos.push({fila: "03", data: []});
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+            else if (ultimaFila == "02") { 
+              datos.push({fila: "03", data: []});
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+            else if (ultimaFila == "03") { 
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+            else if (ultimaFila == "04") { 
+              datos.push({fila: "05", data: []});
+            }
+
+            $scope.datos = datos;
+            $scope.hideload();
+          }
+        },"json");
+       }
+
+       $scope.data.algo = "";
+     });
+  };
+  $scope.agregarProducto = function(pasillo,lado,columna, fila) {
+    var buscap =$ionicPopup.show({
+      template: '<input type="text" class="buscador" ng-keypress="buscarEnter($event)" ng-model="data.algo">',
+      title: 'Ingrese codigo producto',
+      subTitle: '',
+      scope: $scope,
+      buttons: [
+        { 
+          text: 'Cerrar', 
+          type: 'button-dark'
+        },
+        {
+          text: '<b>Siguiente</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+             if (!$scope.data.algo) {
+              e.preventDefault();
+             } else {
+              if ($scope.data.algo.length > 0) {
+                jQuery.post(app.restApi+'?action=sku', { codigo: $scope.data.algo }, function(data) {
+                  if (data.data[0].hasOwnProperty("Nombre")) {
+                     var confirmPopup = $ionicPopup.confirm({
+                      title: 'Terminar',
+                      template: 'Agregar: '+data.data[0].Nombre,
+                      buttons: [{ 
+                        text: 'NO',
+                        type: 'button-default',
+                        onTap: function(e) {
+                          return '0'
+                        }
+                      }, {
+                        text: 'SI',
+                        type: 'button-positive',
+                        onTap: function(e) {
+                          return '1'
+                        }
+                      }]
+                     });
+
+                     confirmPopup.then(function(res) {
+                       if (res==1) {
+                        $scope.showload();
+                        jQuery.post(app.restApi+'?action=agrega', { pasillo: pasillo, lado: lado, columna: columna, fila: fila, codigo: $scope.data.algo }, function(data) {
+                          if (data.res == "OK") {
+                            var datos = [];
+                            var ultimaFila = "";
+                            var actual = {fila: "", data: null};
+                            for (var i = 0; i < data.data.length ; i++) {
+                              if (ultimaFila != data.data[i].Fila) {
+                                if (actual.data != null && actual.data.length > 0) {
+                                  datos.push(actual);
+                                }
+                                var actual = {fila: "", data: null};
+                                actual.data = [];
+                                actual.fila = data.data[i].Fila;
+                                actual.data.push(data.data[i]);
+                                ultimaFila = data.data[i].Fila;
+                              } else {
+                                actual.data.push(data.data[i]);
+                              }
+                            }
+                            if (ultimaFila!="") { datos.push(actual); }
+                            if (ultimaFila == "01") { 
+                              datos.push({fila: "02", data: []});
+                              datos.push({fila: "03", data: []});
+                              datos.push({fila: "04", data: []});
+                              datos.push({fila: "05", data: []});
+                            }
+                            else if (ultimaFila == "02") { 
+                              datos.push({fila: "03", data: []});
+                              datos.push({fila: "04", data: []});
+                              datos.push({fila: "05", data: []});
+                            }
+                            else if (ultimaFila == "03") { 
+                              datos.push({fila: "04", data: []});
+                              datos.push({fila: "05", data: []});
+                            }
+                            else if (ultimaFila == "04") { 
+                              datos.push({fila: "05", data: []});
+                            }
+                            $scope.datos = datos;
+                            $scope.hideload();
+                          }
+                        },"json");
+                       }
+                       $scope.data.algo = "";
+                     });
+                  }
+                  else {
+                    $rootScope.err("No existe el codigo "+$scope.data.algo);
+                  }
+                  //$scope.data.algo="";
+                });
+              }
+              else {
+                $rootScope.err('Codigo muy corto');
+              }
+             }
+          }
+        }
+      ]
+    });
+  }
+})
 .controller('LoginCtrl', function($scope, $ionicPopup, $ionicLoading, $ionicHistory, $localStorage, $state, $rootScope, $location) {
   $scope.user = {
     code: '',
@@ -471,13 +676,11 @@ angular.module('samsungcot.controllers', [])
   }
   
   $scope.leerColumna = function() {
+
+    /*
     cordova.plugins.barcodeScanner.scan(
       function (result) {
-
-      jQuery.post(app.restApi+'?action=buscar', { alu: result.text }, function(data) {
-        alert(result.text);
-      },"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión"); });
-
+          $scope.dale(result.text);
       },
       function (error) {
           $rootScope.err("Error de escaner: "+error);
@@ -491,11 +694,67 @@ angular.module('samsungcot.controllers', [])
           prompt : "Por favor ajuste el codigo al centro", // Android
           resultDisplayDuration: 0, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
           formats : "QR_CODE,PDF_417,CODE_128,EAN_13,CODE_39", // default: all but PDF_417 and RSS_EXPANDED
-          //orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
+          orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
           disableAnimations : true, // iOS
           disableSuccessBeep: false // iOS and Android
       }
     );
+    */
+    $scope.dale("01A0101");
+  }
+
+  $scope.dale = function(text) {
+        var pasillo = text.substr(0,2);
+        var lado = text.substr(2,1);
+        var fila = text.substr(3,2);
+        var columna = text.substr(5,2);
+        $scope.showload();
+        jQuery.post(app.restApi+'?action=buscar', { pasillo: pasillo, lado: lado, columna: columna }, function(data) {
+
+
+          if (data.res=="OK") {
+            var datos = [];
+            var ultimaFila = "";
+            var actual = {fila: "", data: null};
+            for (var i = 0; i < data.data.length ; i++) {
+              if (ultimaFila != data.data[i].Fila) {
+                if (actual.data != null && actual.data.length > 0) {
+                  datos.push(actual);
+                }
+                var actual = {fila: "", data: null};
+                actual.data = [];
+                actual.fila = data.data[i].Fila;
+                actual.data.push(data.data[i]);
+                ultimaFila = data.data[i].Fila;
+              } else {
+                actual.data.push(data.data[i]);
+              }
+            }
+            if (ultimaFila!="") { datos.push(actual); }
+            if (ultimaFila == "01") { 
+              datos.push({fila: "02", data: []});
+              datos.push({fila: "03", data: []});
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+            else if (ultimaFila == "02") { 
+              datos.push({fila: "03", data: []});
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+            else if (ultimaFila == "03") { 
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+            else if (ultimaFila == "04") { 
+              datos.push({fila: "05", data: []});
+            }
+            $state.go("col", {pasillo: pasillo, lado: lado, columna: columna, datos: datos });
+          } else {
+            $rootScope.err("NO ENCONTRO RESULTADOS");
+          }
+          $scope.hideload();
+        },"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión"); });
   }
 
   $scope.showload = function() {
@@ -511,39 +770,6 @@ angular.module('samsungcot.controllers', [])
     });
   };
 
-  $scope.signIn = function(form) {
-    //console.log(form);
-    $scope.showload();
-    jQuery.post(app.restApi+"services/?action=validarLogin", {code: $scope.user.code, user: $scope.user.user, pass: $scope.user.pass}, function(data) {
-      if (data.valid == 1) {
-        app.auth = 1;
-        app.user = $scope.user.user;
-        app.pass = $scope.user.pass;
-        app.code = $scope.user.code;
-        app.store = data.store;
-        app.comercio = data.comercio;
-        app.nombre = data.nombre;
-
-        $localStorage.app = app; //set storage
-
-        $ionicHistory.nextViewOptions({
-          disableBack: true,
-          historyRoot: true
-        });
-        $state.go("main.home");
-      }
-      else {
-        $ionicPopup.alert({
-          title: 'Acceso denegado',
-          content: 'No es valida la combinación de usuario y clave'
-        }).then(function(res) {
-          
-        });
-      }
-      $scope.hideload();
-
-    },"json");
-  };
 });
 
 

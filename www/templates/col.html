@@ -1,0 +1,35 @@
+<ion-nav-bar class="bar-stable">
+  <ion-nav-buttons side="left">
+    <a class="button icon-left ion-chevron-left button-clear button-dark" ng-click="volver();"></a>
+    <ion-title>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PASILLO {{pasillo}} LADO {{lado}} COLUMNA {{columna}}</ion-title>
+  </ion-nav-buttons>
+</ion-nav-bar>
+<ion-content class="cotizar">
+  <div class="text-center">
+    
+  </div>
+  
+  <div style="clear:both;"></div>
+  <div class="text-center">
+  
+  <br /><br />
+  </div>
+  
+  <div class="list" ng-repeat="dato in datos">
+    
+    <div class="item item-divider" style="font-size: 30px;">
+      FILA {{dato.fila}} <button ng-click="agregarProducto(pasillo,lado,columna,dato.fila)" class="button button-royal pull-right"><i class="icon fa fa-plus"></i></button>
+    </div>
+
+    <a class="item" ng-repeat="d in dato.data" style="font-size: 22px;">
+      <table width="100%">
+        <tr>
+          <td width="120"><strong>{{d.IDArticulo}}</strong></td>
+          <td style="text-align:left; overflow: hidden;">{{mm(d.Nombre)}}</td>
+          <td width="100"><button ng-click="borrarProducto(pasillo,lado,columna,dato.fila,d.IDArticulo)" class="button button-danger pull-right"><i class="icon fa fa-remove"></i></button></td>
+        </tr>
+      </table>
+    </a>
+  </div>
+
+</ion-content>
