@@ -217,3 +217,10 @@ ion-content.cotizar {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+a.activated {
+	border:2px solid white;
+	background-color: #F4F4F4;
+}
+a.activated {
+	border:2px solid black;
+}

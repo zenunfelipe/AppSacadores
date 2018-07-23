@@ -112,7 +112,7 @@ angular.module('samsungcot.controllers', [])
 
   $scope.buscarProducto = function() {
 
-    $scope.data = {}
+    $scope.data = {algo: '', pasillo: ''};
 
     var buscap =$ionicPopup.show({
       template: '<input type="text" class="buscador" ng-keypress="buscarEnter($event)" ng-model="data.algo">',
@@ -144,6 +144,18 @@ angular.module('samsungcot.controllers', [])
     });
 
     $scope.buscarEnter = function(keyEvent) {
+      if (keyEvent.which === 13) {
+        if ($scope.data.algo.length > 1) {
+          buscap.close();
+          $state.go('main.add',{search:$scope.data.algo});
+        }
+        else {
+          $rootScope.err('Ingrese 2 letras a lo menos');
+        }
+      }
+    }
+
+    $scope.buscarScanner = function(keyEvent) {
       if (keyEvent.which === 13) {
         if ($scope.data.algo.length > 1) {
           buscap.close();
@@ -454,9 +466,12 @@ angular.module('samsungcot.controllers', [])
 
   };
 
+
+
 })
 
 .controller('AndesCtrl', function($scope, $ionicPopup, $ionicLoading, $ionicHistory, $localStorage, $state, $rootScope, $location, $stateParams) {
+
   $scope.volver = function() { $ionicHistory.goBack(); }
 
   $scope.mm = function(x) {
@@ -481,10 +496,10 @@ angular.module('samsungcot.controllers', [])
   $scope.pasillo = $stateParams.pasillo;
   $scope.fila = $stateParams.fila;
   $scope.lado = $stateParams.lado;
-  $scope.data = { algo: '' };
+  $scope.data = { algo: '', pasillo: '' };
   console.log($scope.datos);
   if ($scope.datos.length == 0) {
-    $state.go("login");
+    $rootScope.err("No hay resultados en el pasillo/columna");
   }
 
   $scope.borrarProducto = function(pasillo,lado,columna, fila,id) {
@@ -557,6 +572,7 @@ angular.module('samsungcot.controllers', [])
        $scope.data.algo = "";
      });
   };
+
   $scope.agregarProducto = function(pasillo,lado,columna, fila) {
     var buscap =$ionicPopup.show({
       template: '<input type="text" class="buscador" ng-keypress="buscarEnter($event)" ng-model="data.algo">',
@@ -669,14 +685,72 @@ angular.module('samsungcot.controllers', [])
   };
   $scope.botonesLogin = true;
 
+
+  /* XML */
+  var soapRequest =
+        '<?xml version="1.0" encoding="utf-8"?> \
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"> \
+        <soapenv:Header/> \
+          <soapenv:Body> \
+            <ag:GetSacadores xmlns:ag="http://microsoft.com/webservices/"> \
+            </ag:GetSacadores> \
+          </soapenv:Body> \
+        </soapenv:Envelope>';
+
+  jQuery.ajax({
+      type: "POST",
+      url: "http://192.168.200.111:8092/Sacadores.asmx?wsdl",
+      contentType: "text/xml",
+      dataType: "xml",
+      data: soapRequest
+  }).then(function(data) { 
+      //$rootScope.log('OK','DASH anulaPago', new XMLSerializer().serializeToString(data));
+      var $xml = $( data );
+      console.log($xml);
+      /*
+      var msg = $xml.find('return>EL_MENSAJE').text();
+      var doctype = $xml.find('return>TEL_CODIGO').text();
+      var codigoAsoc = $xml.find('return>DDV_CODIGO').text();*/
+  }, function(data) {
+    console.log('pico');
+  });
+
+
   if (!$localStorage.app) { $localStorage.app = app; }
 
   if ($localStorage.app.auth == 1) {
     $state.go("main.home");
   }
   
+  $scope.leerScanner = function() {
+    $scope.data = {algo: '', pasillo: ''};
+    var buscap =$ionicPopup.show({
+      template: '<input type="text" class="buscador" ng-keypress="buscarScanner($event)" ng-model="data.pasillo">',
+      title: 'Ingrese pasillo con lector',
+      subTitle: '',
+      scope: $scope,
+      buttons: [
+        { 
+          text: 'Cerrar', 
+          type: 'button-dark'
+        },
+        {
+          text: '<b>Siguiente</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+             if (!$scope.data.pasillo) {
+              e.preventDefault();
+             } else {
+              $scope.dale($scope.data.pasillo);
+             }
+          }
+        }
+      ]
+    });
+  };
+
   $scope.leerColumna = function() {
-    
+  
     cordova.plugins.barcodeScanner.scan(
       function (result) {
           $scope.dale(result.text);
@@ -699,7 +773,7 @@ angular.module('samsungcot.controllers', [])
       }
     );
     
-    //$scope.dale("01A0101");
+    /*$scope.dale("08A0101");*/
   }
 
   $scope.dale = function(text) {
