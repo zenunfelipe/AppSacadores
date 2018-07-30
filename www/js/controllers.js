@@ -498,9 +498,6 @@ angular.module('samsungcot.controllers', [])
   $scope.lado = $stateParams.lado;
   $scope.data = { algo: '', pasillo: '' };
   console.log($scope.datos);
-  if ($scope.datos.length == 0) {
-    $rootScope.err("No hay resultados en el pasillo/columna");
-  }
 
   $scope.borrarProducto = function(pasillo,lado,columna, fila,id) {
 
@@ -563,8 +560,17 @@ angular.module('samsungcot.controllers', [])
               datos.push({fila: "05", data: []});
             }
 
+            if(data.data.length == 0) {
+              datos.push({fila: "01", data: []});
+              datos.push({fila: "02", data: []});
+              datos.push({fila: "03", data: []});
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+
             $scope.datos = datos;
             $scope.hideload();
+            console.log(datos);
           }
         },"json");
        }
@@ -822,6 +828,16 @@ angular.module('samsungcot.controllers', [])
             else if (ultimaFila == "04") { 
               datos.push({fila: "05", data: []});
             }
+            if(data.data.length == 0) {
+              datos.push({fila: "01", data: []});
+              datos.push({fila: "02", data: []});
+              datos.push({fila: "03", data: []});
+              datos.push({fila: "04", data: []});
+              datos.push({fila: "05", data: []});
+            }
+
+
+            
             $state.go("col", {pasillo: pasillo, lado: lado, columna: columna, datos: datos });
           } else {
             $rootScope.err("NO ENCONTRO RESULTADOS");
