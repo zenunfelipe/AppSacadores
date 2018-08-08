@@ -13,7 +13,7 @@ app = {
         nombre: ''
       };
 var printers = [];
-var alertPopup; 
+var alertPopup, buscap; 
 angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
 
 .run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup) {

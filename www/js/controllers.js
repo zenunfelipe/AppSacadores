@@ -112,9 +112,9 @@ angular.module('samsungcot.controllers', [])
 
   $scope.buscarProducto = function() {
 
-    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
+    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '', mensaje: '' };
 
-    var buscap = $ionicPopup.show({
+    buscap = $ionicPopup.show({
       template: '<input type="text" class="buscador" ng-keypress="buscarEnter($event)" ng-model="data.algo">',
       title: 'Buscar producto',
       subTitle: '',
@@ -496,7 +496,7 @@ angular.module('samsungcot.controllers', [])
   $scope.pasillo = $stateParams.pasillo;
   $scope.fila = $stateParams.fila;
   $scope.lado = $stateParams.lado;
-  $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
+  $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '', mensaje: '' };
   console.log($scope.datos);
 
   $scope.borrarProducto = function(pasillo,lado,columna, fila,id) {
@@ -580,7 +580,8 @@ angular.module('samsungcot.controllers', [])
   };
 
   $scope.agregarProducto = function(pasillo,lado,columna, fila) {
-    var buscap =$ionicPopup.show({
+
+    buscap =$ionicPopup.show({
       template: '<input type="text" class="buscador" ng-keypress="buscarEnter($event)" ng-model="data.algo">',
       title: 'Ingrese codigo producto',
       subTitle: '',
@@ -683,7 +684,7 @@ angular.module('samsungcot.controllers', [])
     });
   }
 })
-.controller('LoginCtrl', function($scope, $ionicPopup, $ionicLoading, $ionicHistory, $localStorage, $state, $rootScope, $location) {
+.controller('LoginCtrl', function($scope, $ionicPopup, $ionicLoading, $ionicHistory, $timeout, $localStorage, $state, $rootScope, $location) {
   $scope.user = {
     code: '',
     user: '',
@@ -751,16 +752,17 @@ angular.module('samsungcot.controllers', [])
       else {
         $rootScope.err('Codigo invalido');
         $scope.data.eancode='';
-        $("#f2").focus();
+        $timeout(function() { $("#f2").focus(); }, 500);
       }
     }
   };
 
   $scope.equiparar = function() {
-    console.log('equiparar');
-    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
-    var buscap = $ionicPopup.show({
-      template: '<input type="text" id="f1" class="buscador" placeholder="EAN 13" ng-keydown="leerEan13($event, data.ean13)" ng-model="data.ean13"><br><br><input type="text" class="buscador" ng-keydown="leerEanAndes($event, data.eancode)" ng-model="data.eancode" id="f2" placeholder="COD. ANDES">',
+    
+    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '', mensaje: '' };
+
+    buscap = $ionicPopup.show({
+      template: '<div class="mensaje-asociar">{{data.mensaje}}</div><input type="text" id="f1" class="buscador" placeholder="EAN 13" ng-keydown="leerEan13($event, data.ean13)" ng-model="data.ean13"><br><br><input type="text" class="buscador" ng-keydown="leerEanAndes($event, data.eancode)" ng-model="data.eancode" id="f2" placeholder="COD. ANDES">',
       title: 'Equiparar EAN 13',
       subTitle: '',
       cssClass: 'equiparar',
@@ -777,20 +779,21 @@ angular.module('samsungcot.controllers', [])
              e.preventDefault();
              $scope.data.ean13 = '';             
              $scope.data.eancode = '';
-             setTimeout(function() { $('#f1').focus(); },500);
+             $timeout(function() { $('#f1').focus(); },500);
           }
         },
         {
           text: '<b>Asociar</b>',
           type: 'button-positive',
           onTap: function(e) {
+             e.preventDefault();
              $scope.asociarEANCODE();
           }
         }
       ]
     });
 
-    setTimeout(function() { $('#f1').focus(); },500);
+    $timeout(function() { $('#f1').focus(); },500);
   }
 
   $scope.asociarEANCODE = function() {
@@ -810,18 +813,24 @@ angular.module('samsungcot.controllers', [])
         if (data.res=="OK") {
           $scope.data.ean13 = '';
           $scope.data.eancode = '';
-          $rootScope.ok('Realizado OK!', function() {
-            $scope.equiparar();
-          });
+          $scope.data.mensaje = 'Realizado OK';
+          $scope.hideload();
+          $timeout(function(){
+            $("#f1").focus();
+          },500);
+          $timeout(function(){
+            $scope.data.mensaje = "";
+          },2000);
           /*
           setTimeout(function() { 
             alertPopup.close(); 
             $scope.equiparar();
           }, 2000);*/
         } else {
+          $scope.hideload();
           $rootScope.err("NO SE ACTUALIZO EL REGISTRO");
         }
-        $scope.hideload();
+        
       },"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión"); $scope.hideload(); });
     }
 
@@ -829,8 +838,8 @@ angular.module('samsungcot.controllers', [])
 
   
   $scope.leerScanner = function() {
-    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
-    var buscap =$ionicPopup.show({
+    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '', mensaje: '' };
+    buscap =$ionicPopup.show({
       template: '<input type="text" class="buscador" ng-keypress="buscarScanner($event)" ng-model="data.pasillo">',
       title: 'Ingrese pasillo con lector',
       subTitle: '',

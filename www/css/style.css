@@ -227,6 +227,13 @@ a.activated {
 .equiparar .popup {
 width: 90%;
 }
+.mensaje-asociar {
+	display: block;
+	font-size: 15px;
+	margin-bottom: 5px;
+	font-weight:bold;
+	color: blue;
+}
 .equiparar .popup .button {
 	font-size: 13px;
 }
