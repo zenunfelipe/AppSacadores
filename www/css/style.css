@@ -227,3 +227,6 @@ a.activated {
 .equiparar .popup {
 width: 90%;
 }
+.equiparar .popup .button {
+	font-size: 13px;
+}

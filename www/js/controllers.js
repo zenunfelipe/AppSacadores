@@ -808,13 +808,16 @@ angular.module('samsungcot.controllers', [])
       console.log('post request');
       jQuery.post(app.restApi+'?action=asociar', { andes: $scope.data.eancode, ean: $scope.data.ean13 }, function(data) {
         if (data.res=="OK") {
-          $rootScope.ok('Realizado OK!');
           $scope.data.ean13 = '';
           $scope.data.eancode = '';
+          $rootScope.ok('Realizado OK!', function() {
+            $scope.equiparar();
+          });
+          /*
           setTimeout(function() { 
             alertPopup.close(); 
             $scope.equiparar();
-          }, 2000);
+          }, 2000);*/
         } else {
           $rootScope.err("NO SE ACTUALIZO EL REGISTRO");
         }
