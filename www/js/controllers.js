@@ -21,7 +21,7 @@ angular.module('samsungcot.controllers', [])
 			});
 			//alert($scope.cotLista.length);
 		}
-	},"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión a internet"); });
+	},"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión a internet"); $scope.hideload(); });
 
 	$scope.cancelarAgregar = function() {
 		$state.go("main.cotizar", { reload: true });
@@ -112,9 +112,9 @@ angular.module('samsungcot.controllers', [])
 
   $scope.buscarProducto = function() {
 
-    $scope.data = {algo: '', pasillo: ''};
+    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
 
-    var buscap =$ionicPopup.show({
+    var buscap = $ionicPopup.show({
       template: '<input type="text" class="buscador" ng-keypress="buscarEnter($event)" ng-model="data.algo">',
       title: 'Buscar producto',
       subTitle: '',
@@ -496,7 +496,7 @@ angular.module('samsungcot.controllers', [])
   $scope.pasillo = $stateParams.pasillo;
   $scope.fila = $stateParams.fila;
   $scope.lado = $stateParams.lado;
-  $scope.data = { algo: '', pasillo: '' };
+  $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
   console.log($scope.datos);
 
   $scope.borrarProducto = function(pasillo,lado,columna, fila,id) {
@@ -692,7 +692,7 @@ angular.module('samsungcot.controllers', [])
   $scope.botonesLogin = true;
 
 
-  /* XML */
+  /* XML 
   var soapRequest =
         '<?xml version="1.0" encoding="utf-8"?> \
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"> \
@@ -713,23 +713,124 @@ angular.module('samsungcot.controllers', [])
       //$rootScope.log('OK','DASH anulaPago', new XMLSerializer().serializeToString(data));
       var $xml = $( data );
       console.log($xml);
-      /*
-      var msg = $xml.find('return>EL_MENSAJE').text();
-      var doctype = $xml.find('return>TEL_CODIGO').text();
-      var codigoAsoc = $xml.find('return>DDV_CODIGO').text();*/
+      //var msg = $xml.find('return>EL_MENSAJE').text();
+      //var doctype = $xml.find('return>TEL_CODIGO').text();
+      //var codigoAsoc = $xml.find('return>DDV_CODIGO').text();
+
   }, function(data) {
     console.log('pico');
   });
-
+  */
 
   if (!$localStorage.app) { $localStorage.app = app; }
 
   if ($localStorage.app.auth == 1) {
     $state.go("main.home");
   }
+
+
+  $scope.leerEan13 = function(e, value) {
+    if (value.length >= 13) {
+      if (value.length == 13) {
+        $("#f2").focus();
+      } 
+      else {
+        $rootScope.err('Codigo invalido');
+        $scope.data.ean13='';
+        $("#f1").focus();
+      }
+    }
+  };
+
+  $scope.leerEanAndes = function(e, value) {
+    if (value.length >= 14) {
+      if (value.length == 14) {
+        e.preventDefault();
+        $scope.asociarEANCODE();
+      } 
+      else {
+        $rootScope.err('Codigo invalido');
+        $scope.data.eancode='';
+        $("#f2").focus();
+      }
+    }
+  };
+
+  $scope.equiparar = function() {
+    console.log('equiparar');
+    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
+    var buscap = $ionicPopup.show({
+      template: '<input type="text" id="f1" class="buscador" placeholder="EAN 13" ng-keydown="leerEan13($event, data.ean13)" ng-model="data.ean13"><br><br><input type="text" class="buscador" ng-keydown="leerEanAndes($event, data.eancode)" ng-model="data.eancode" id="f2" placeholder="COD. ANDES">',
+      title: 'Equiparar EAN 13',
+      subTitle: '',
+      cssClass: 'equiparar',
+      scope: $scope,
+      buttons: [
+        { 
+          text: 'Cerrar', 
+          type: 'button-dark'
+        },
+        {
+          text: '<b>Limpiar</b>',
+          type: 'button-assertive',
+          onTap: function(e) {
+             e.preventDefault();
+             $scope.data.ean13 = '';             
+             $scope.data.eancode = '';
+             setTimeout(function() { $('#f1').focus(); },500);
+          }
+        },
+        {
+          text: '<b>Asociar</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+             e.preventDefault();
+             $scope.asociarEANCODE();
+          }
+        }
+      ]
+    });
+
+    setTimeout(function() { $('#f1').focus(); },500);
+  }
+
+  $scope.asociarEANCODE = function() {
+
+    if ($scope.data.ean13.length != 13) {
+      $rootScope.err('Codigo invalido EAN-13');
+      $scope.data.ean13 = '';
+      $scope.data.eancode = '';
+      setTimeout(function() { $('#f1').focus(); },500);
+    }
+    else if ($scope.data.eancode.length != 14) {
+      $rootScope.err('Codigo invalido Andes');
+      $scope.data.ean13 = '';
+      $scope.data.eancode = '';
+      setTimeout(function() { $('#f1').focus(); },500);
+    }
+    else {
+      $scope.showload();
+      jQuery.post(app.restApi+'?action=asociar', { andes: $scope.data.eancode, ean: $scope.data.ean13 }, function(data) {
+        if (data.res=="OK") {
+          $rootScope.ok('Realizado OK!');
+          $scope.data.ean13 = '';
+          $scope.data.eancode = '';
+          setTimeout(function() { 
+            alertPopup.close(); 
+            setTimeout(function() { $('#f1').focus(); },500);
+          }, 2000);
+        } else {
+          $rootScope.err("NO SE ACTUALIZO EL REGISTRO");
+        }
+        $scope.hideload();
+      },"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión"); $scope.hideload(); });
+    }
+
+  };
+
   
   $scope.leerScanner = function() {
-    $scope.data = {algo: '', pasillo: ''};
+    $scope.data = { algo: '', pasillo: '', ean13: '', eancode: '' };
     var buscap =$ionicPopup.show({
       template: '<input type="text" class="buscador" ng-keypress="buscarScanner($event)" ng-model="data.pasillo">',
       title: 'Ingrese pasillo con lector',
@@ -843,7 +944,7 @@ angular.module('samsungcot.controllers', [])
             $rootScope.err("NO ENCONTRO RESULTADOS");
           }
           $scope.hideload();
-        },"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión"); });
+        },"json").fail(function() { $rootScope.err("No responde el servidor, revise su conexión"); $scope.hideload(); });
   }
 
   $scope.showload = function() {
@@ -880,4 +981,11 @@ function miles(nStr) {
             x1 = x1.replace(rgx, '$1' + '.' + '$2');
     }
     return x1 + x2;
+}
+function eanCheckDigit(s){
+    var result = 0;
+    for (counter = s.length-1; counter >=0; counter--){
+        result = result + parseInt(s.charAt(counter)) * (1+(2*(counter % 2)));
+    }
+    return (10 - (result % 10)) % 10;
 }

@@ -13,7 +13,7 @@ app = {
         nombre: ''
       };
 var printers = [];
-
+var alertPopup; 
 angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
 
 .run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup) {
@@ -32,7 +32,7 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
   });
   $rootScope.statusImpresora = "No conectada";
   $rootScope.err = function(msg, cb) {
-     var alertPopup = $ionicPopup.alert({
+     alertPopup = $ionicPopup.alert({
        title: 'Error',
        template: (msg ? msg : 'Error al consultar el servicio. Intente más tarde'),
        buttons: [{
@@ -50,7 +50,7 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
   };
   $rootScope.ok = function(msg) {
     
-     var alertPopup = $ionicPopup.alert({
+     alertPopup = $ionicPopup.alert({
        title: 'Listo',
        template: (msg ? msg : 'Operación realizada'),
        buttons: [{

@@ -12,6 +12,7 @@
   <content src="index.html"/>
   <access origin="*"/>
   
+  <preference name="KeyboardDisplayRequiresUserAction" value="false" />
   <preference name="phonegap-version" value="cli-7.1.0" />
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>

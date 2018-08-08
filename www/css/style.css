@@ -224,3 +224,6 @@ a.activated {
 a.activated {
 	border:2px solid black;
 }
+.equiparar .popup {
+width: 90%;
+}
