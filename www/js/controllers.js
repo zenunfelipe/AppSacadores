@@ -784,8 +784,6 @@ angular.module('samsungcot.controllers', [])
           text: '<b>Asociar</b>',
           type: 'button-positive',
           onTap: function(e) {
-             e.preventDefault();
-             console.log('desde asociacion');
              $scope.asociarEANCODE();
           }
         }
@@ -799,15 +797,11 @@ angular.module('samsungcot.controllers', [])
     console.log('disparado!');
     if ($scope.data.ean13.length != 13) {
       $rootScope.err('Codigo invalido EAN-13');
-      $scope.data.ean13 = '';
-      $scope.data.eancode = '';
-      setTimeout(function() { $('#f1').focus(); },500);
+      $scope.equiparar();
     }
     else if ($scope.data.eancode.length != 14) {
       $rootScope.err('Codigo invalido Andes');
-      $scope.data.ean13 = '';
-      $scope.data.eancode = '';
-      setTimeout(function() { $('#f1').focus(); },500);
+      $scope.equiparar();
     }
     else {
       $scope.showload();
@@ -819,7 +813,7 @@ angular.module('samsungcot.controllers', [])
           $scope.data.eancode = '';
           setTimeout(function() { 
             alertPopup.close(); 
-            setTimeout(function() { $('#f1').focus(); },500);
+            $scope.equiparar();
           }, 2000);
         } else {
           $rootScope.err("NO SE ACTUALIZO EL REGISTRO");
