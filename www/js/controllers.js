@@ -785,6 +785,7 @@ angular.module('samsungcot.controllers', [])
           type: 'button-positive',
           onTap: function(e) {
              e.preventDefault();
+             console.log('desde asociacion');
              $scope.asociarEANCODE();
           }
         }
@@ -795,7 +796,7 @@ angular.module('samsungcot.controllers', [])
   }
 
   $scope.asociarEANCODE = function() {
-
+    console.log('disparado!');
     if ($scope.data.ean13.length != 13) {
       $rootScope.err('Codigo invalido EAN-13');
       $scope.data.ean13 = '';
@@ -810,6 +811,7 @@ angular.module('samsungcot.controllers', [])
     }
     else {
       $scope.showload();
+      console.log('post request');
       jQuery.post(app.restApi+'?action=asociar', { andes: $scope.data.eancode, ean: $scope.data.ean13 }, function(data) {
         if (data.res=="OK") {
           $rootScope.ok('Realizado OK!');
