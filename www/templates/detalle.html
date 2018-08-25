@@ -1,0 +1,70 @@
+<ion-view view-title="Pedido #{{pedido.NroDocumento}}">
+  <ion-header-bar class="bar bar-subheader detalle-subheader">
+    <div class="">
+      <h2 class="title">Tienes {{itemsPendientes}} items pendientes</h2>
+    </div>
+  </ion-header-bar>
+  <ion-content class="pedido" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
+    <div class="list">
+
+      <a class="card item item-text-wrap" href="#" ng-if="detalle.length == 0" style="width: 100%; text-align: left;">
+        Pedido sin lineas
+      </a>
+
+      <a href="#" class="item item-linea item-text-wrap" ng-repeat="linea in detalle"> <!-- ng-click=""  -->
+        <div class="row row-one">
+          <div class="col-33">
+            <span class="linea-idarticulo">{{linea.IDArticulo}}</span>
+          </div>
+          <div class="col-33">
+            <span class="linea-head-info">solicitado</span>
+            <span class="linea-cantidad">{{linea.Cantidad}}</span>
+          </div>
+          <div class="col-33">
+            <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
+            <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
+          </div>
+        </div>
+        <div class="row row-two">
+          <div class="col">
+            <span class="linea-nombre">{{linea.Nombre}}</span>
+          </div>
+        </div>
+        <div class="row row-three">
+          <div class="col-25">
+            <span class="linea-pasillo">Pasillo {{linea.Pasillo}}</span>
+          </div>
+          <div class="col-25">
+            <span class="linea-lado">Lado {{linea.Lado}}</span>
+          </div>
+          <div class="col-25">
+            <span class="linea-columna">Col. {{linea.Columna}}</span>
+          </div>
+          <div class="col-25">
+            <span class="linea-fila">Fila {{linea.Fila}}</span>
+          </div>
+        </div>
+        <!--<div class="linea-linea">{{linea.Linea}}</div>-->       
+        <div class="row row-four" ng-if="linea.Nota != ''">
+          <div class="col"><strong>* Nota:</strong> <span class="linea-nota">{{linea.Nota}}</span></div>
+        </div>
+      </a>
+
+    </div>
+  </ion-content>
+
+  <ion-footer-bar class="bar-stable detalle-footer" style="height: 55px;">
+    <div class="row">
+      <div class="col col-67">
+        <strong>{{pedido.RazonSocial}}</strong>
+      </div>
+      <div class="col col-33 text-right">
+        <button class="button button-assertive" ng-click="refresh()">
+          Terminar
+        </button>
+      </div>
+    </div>
+    
+  </ion-footer-bar>
+
+</ion-view>

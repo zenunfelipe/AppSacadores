@@ -1,20 +1,29 @@
-<ion-view view-title="PointSale Mobile">
+<ion-view view-title="Andes - Tienes {{$root.pedidos.length}} pedidos">
   <ion-content class="home" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
-    <h3>Bienvenido a PointSale</h3>
 
-    <h5>Selecciona una herramienta para comenzar</h5>
-    
-    <div class="row">
-      <div class="col col-33">
-        <a ng-click="goCompras();"><img src="img/cargo.png" /> <br /> Compras</a>
-      </div>
-      <div class="col col-33">
-        <a ng-click="goCotizar();"><img src="img/pos.png" /> <br /> Cotizador </a>
-      </div>
-      <div class="col col-33">
-        <a ng-click="goInventario();"><img src="img/warehouse.png" /> <br />  Inventario</a>
-      </div>
-    </div>
+    <ion-refresher on-refresh="refresh(1)"></ion-refresher>
+
+    <a class="card item item-text-wrap" href="#" ng-if="pedidos.length == 0" style="width: 100%; text-align: left;">
+      {{emptyMessage}}
+    </a>
+
+    <a href="#" class="item item-pedido item-text-wrap {{(pedido.Habilitado == 0 ? 'item-pedido-off' : '')}} {{(pedido.Habilitado == 2 || pedido.Habilitado == 3 ? 'item-pedido-running' : '')}}" ng-click="detalle(pedido)" ng-repeat="pedido in pedidos">
+      <div class="pedido-nrodocumento"><i class="fa fa-thumb-tack"></i> Pedido #{{pedido.NroDocumento}}</div>
+      <div class="pedido-razonsocial">{{pedido.RazonSocial}}</div>
+    </a>
 
   </ion-content>
+  <ion-footer-bar class="bar-stable" style="height: 55px;">
+    <div class="row" style="padding:0;">
+      <div class="col col-67" style="padding-top: 10px;">
+        <strong>Sacador: {{$root.sacador.NombreSacador}}</strong>
+      </div>
+      <div class="col col-33 text-right">
+        <button class="button button-dark" ng-click="refresh()">
+          Actualizar ({{segs}})
+        </button>
+      </div>
+    </div>
+    
+  </ion-footer-bar>
 </ion-view>

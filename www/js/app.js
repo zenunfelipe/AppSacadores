@@ -1,20 +1,9 @@
 app = {
-        restApi:  "http://192.168.200.125:8085/bodega/",
-        impID: "",
-        impNN: "",
-        impSERV: "18F0",
-        impCHAR: "2AF1",
-        auth: 0,
-        store: 0,
-        code: '',
-        user: '',
-        pass: '',
-        comercio: '',
-        nombre: ''
-      };
+  rest:  "http://186.67.74.115:8085/bodega"
+};
 var printers = [];
-var alertPopup, buscap; 
-angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
+
+angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
 .run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup) {
   $ionicPlatform.ready(function() {
@@ -30,14 +19,22 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
       StatusBar.styleDefault();
     }
   });
-  $rootScope.statusImpresora = "No conectada";
+
+
+  if (!$localStorage.app) { $localStorage.app = app;  }
+  if ($localStorage.sacador) { $rootScope.sacador = $localStorage.sacador; }
+  
+  $rootScope.viendoDetalle = 0;
+  
+  $state.go("main.home");
+
   $rootScope.err = function(msg, cb) {
-     alertPopup = $ionicPopup.alert({
+     var alertPopup = $ionicPopup.alert({
        title: 'Error',
        template: (msg ? msg : 'Error al consultar el servicio. Intente más tarde'),
        buttons: [{
         text: 'Aceptar',
-        type: 'button-fn'
+        type: 'button-assertive'
         }]
      });
 
@@ -49,13 +46,12 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
      });
   };
   $rootScope.ok = function(msg) {
-    
-     alertPopup = $ionicPopup.alert({
+     var alertPopup = $ionicPopup.alert({
        title: 'Listo',
        template: (msg ? msg : 'Operación realizada'),
        buttons: [{
         text: 'Aceptar',
-        type: 'button-fn'
+        type: 'button-assertive'
         }]
      });
 
@@ -63,8 +59,6 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
       $("body").removeClass("modal-open");
       alertPopup.close();
      });
-     
-     //alert(msg);
   };
   $rootScope.confirmar = function(msg, callback,no) {
    var confirmPopup = $ionicPopup.confirm({
@@ -78,7 +72,7 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
       },
       {
         text: '<b>Aceptar</b>',
-        type: 'button-possitive',
+        type: 'button-assertive',
         onTap: function(e) {
           $("body").removeClass("modal-open");
           callback();
@@ -88,6 +82,22 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
    });
   };
 
+  $rootScope.forHumans = function  ( seconds ) {
+      var levels = [
+          [Math.floor(seconds / 31536000), 'años'],
+          [Math.floor((seconds % 31536000) / 86400), 'dias'],
+          [Math.floor(((seconds % 31536000) % 86400) / 3600), 'hrs'],
+          [Math.floor((((seconds % 31536000) % 86400) % 3600) / 60), 'mins'],
+          [(((seconds % 31536000) % 86400) % 3600) % 60, 'segs'],
+      ];
+      var returntext = '';
+
+      for (var i = 0, max = levels.length; i < max; i++) {
+          if ( levels[i][0] === 0 ) continue;
+          returntext += ' ' + levels[i][0] + ' ' + (levels[i][0] === 1 ? levels[i][1].substr(0, levels[i][1].length-1): levels[i][1]);
+      };
+      return returntext.trim();
+  }
 
   $rootScope.cerrarSession = function() {
     $rootScope.confirmar('Vas a salir de tu cuenta', function() {
@@ -103,14 +113,11 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
 
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 
-  .state('login', {
-    url: '/login',
-    templateUrl: 'templates/login.html',
-    controller: 'LoginCtrl'
-  }) 
+  $ionicConfigProvider.backButton.previousTitleText(false).text('');
+
+  $stateProvider
 
   .state('main', {
     url: '/main',
@@ -119,18 +126,6 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
     controller: 'MainCtrl'
   })
 
-  .state('col', {
-    url: '/col',
-    templateUrl: 'templates/col.html',
-    controller: 'AndesCtrl',
-    params : {
-      datos: [],
-      pasillo: '',
-      lado: '',
-      columna: ''
-    }
-  }) 
-
   .state('main.home', {
     url: '/home',
     views: {
@@ -138,35 +133,27 @@ angular.module('samsungcot', ['ionic', 'samsungcot.controllers','ngStorage'])
         templateUrl: 'templates/home.html',
         controller: 'HomeCtrl'
       }
-    },
-    params : {
-      reloadPrecios: 0
     }
   })
-
-  .state('main.cotizar', {
-    url: '/cotizar',
+  .state('main.detalle', {
+    url: '/detalle',
     views: {
       'menuContent': {
-        templateUrl: 'templates/cotizar.html',
-        controller: 'CotizarCtrl'
+        templateUrl: 'templates/detalle.html',
+        controller: 'DetalleCtrl'
       }
     },
     params : {
-      reloadPrecios: 0
+      pedido: null
     }
   })
 
-
-  .state('main.add', {
-    url: '/add/:search',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/add.html',
-        controller: 'AddCtrl'
-      }
-    }
-  })
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/login');
-});
+  //$urlRouterProvider.otherwise('/main/home');
+})
+.filter('price', [
+function() { // should be altered to suit your needs
+    return function(input) {
+      var ret=(input)?input.toString().trim().replace(",",".").toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."):0;
+      return ("$ "+ret);
+    };
+}]);
