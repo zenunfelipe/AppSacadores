@@ -18,7 +18,12 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
         window.cordova.plugins.honeywell.claim(() => { 
           console.info('claim success');
           window.cordova.plugins.honeywell.register(function(event) {
-            $rootScope.$broadcast('scanner', { data: event });
+            var $body = angular.element(document.body);            // 1
+            var $rootScope = $body.injector().get('$rootScope');   // 2b
+            $rootScope.$broadcast("scanner", { data: event });
+            $rootScope.$apply();
+            window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
+            
           }, function(err) { 
             console.log(err); 
           });

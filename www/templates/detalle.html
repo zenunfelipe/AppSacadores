@@ -8,7 +8,7 @@
     <div class="list">
 
       <a class="card item item-text-wrap" href="#" ng-if="detalle.length == 0" style="width: 100%; text-align: left;">
-        Pedido sin lineas
+        Pedido sin lineas, si está completado el picking presione terminar
       </a>
 
       <a href="#" class="item item-linea item-text-wrap" ng-repeat="linea in detalle"> <!-- ng-click=""  -->
@@ -59,7 +59,7 @@
         <strong>{{pedido.RazonSocial}}</strong>
       </div>
       <div class="col col-33 text-right">
-        <button class="button button-assertive" ng-click="refresh()">
+        <button class="button button-assertive" ng-click="ended()">
           Terminar
         </button>
       </div>

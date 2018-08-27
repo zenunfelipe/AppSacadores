@@ -2,19 +2,34 @@
 angular.module('andes.controllers', [])
 
 
-.controller('DetalleCtrl', function($scope, $state, $rootScope, $ionicHistory, $localStorage, $location, $timeout, $ionicLoading, $ionicPopup, $stateParams) {
+.controller('DetalleCtrl', function($scope, $state, $rootScope, $ionicHistory, $localStorage, $location, $ionicModal, $timeout, $ionicLoading, $ionicPopup, $stateParams) {
   $scope.pedido = $stateParams.pedido;
   $scope.detalle = [];
   $scope.itemsPendientes = 0;
 
   $scope.$on('$ionicView.beforeLeave', function(obj, viewData){
     $rootScope.viendoDetalle = 0;
+    window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
   }); 
   $scope.$on('$ionicView.afterEnter', function(obj, viewData){
     $rootScope.viendoDetalle = 1;
+    window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
   }); 
 
+  $ionicModal.fromTemplateUrl('templates/notification.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.modalNotification = modal;
+  });
 
+  $scope.$on("open-notification", function(event, args) {
+    $scope.modalNotification.show();
+  });
+
+  $scope.closeNotification = function() {
+    $scope.modalNotification.close();
+  }
   $scope.$on('scanner', function(event, args) {
     console.log('scanner reader');
     console.log(args);
@@ -29,10 +44,17 @@ angular.module('andes.controllers', [])
         $scope.hideload();
         if (data.res == "ERR") {
           navigator.notification.beep(2);
-          $rootScope.err(data.msg);
+          window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
+          $rootScope.err(data.msg, function() {
+            window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
+          });
         }
         else {
-          $scope.refreshPedido();
+          $scope.detalle = data.PedidoDetalles;
+          $scope.itemsPendientes = 0;
+          for (var i = 0; i < $scope.detalle.length; i++) {
+            $scope.itemsPendientes += ($scope.detalle[i].Cantidad - data.data[i].CantidadPicking);
+          }
         }
       },"json").fail(function() {
         $scope.hideload();
@@ -45,6 +67,36 @@ angular.module('andes.controllers', [])
   if (!$scope.pedido && !$scope.pedido.hasOwnProperty("IDOperacion")) {
     $rootScope.err("Pedido no es accesible");
     $ionicHistory.goBack();
+  }
+
+  $scope.ended = function() {
+    // Todo Notifications
+    if ($scope.itemsPendientes > 0) {
+      $rootScope.confirmar('Existen '+$scope.itemsPendientes+' lineas pendientes, ¿deseas terminar el pedido ahora?', function() {
+        $scope.close();
+      });
+    } else {
+      $scope.close();
+    }
+  }
+
+  $scope.close = function() {
+    $scope.showload();
+    jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarEstado", {
+      AnnoProceso: o.AnnoProceso,
+      IDOperacion: o.IDOperacion,
+      Correlativo: o.Correlativo,
+      IDEtapa: 1,
+      IDEstado: 5,
+      IDSacador: $rootScope.sacador.IDSacador,
+      IDUsuario: $rootScope.sacador.szUsuario
+    }, function(data) {
+      $scope.hideload();
+      $ionicHistory.goBack();
+    }).fail(function() {
+      $scope.hideload();
+      $rootScope.err();
+    });
   }
 
   $scope.refreshPedido = function() {
@@ -134,6 +186,10 @@ angular.module('andes.controllers', [])
   }).then(function(modal) {
     $scope.modalConfiguracion = modal;
   });
+
+  $scope.openNotification = function() {
+    $rootScope.$broadcast("open-notification");
+  }
 
 
   $scope.showload = function(text) {
