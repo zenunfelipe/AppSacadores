@@ -15,13 +15,40 @@ angular.module('andes.controllers', [])
   }); 
 
 
+  $scope.$on('scanner', function(event, args) {
+    console.log('scanner reader');
+    console.log(args);
+    if (args.hasOwnProperty("data") && args.data.success == true) {
+      jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
+        IDOperacion: $scope.pedido.IDOperacion, 
+        AnnoProceso: $scope.pedido.AnnoProceso, 
+        Correlativo: $scope.pedido.Correlativo, 
+        CodigoBarras: args.data.data,
+        IDUsuario: $rootScope.sacador.szUsuario
+      }, function(data) {
+        $scope.hideload();
+        if (data.res == "ERR") {
+          navigator.notification.beep(2);
+          $rootScope.err(data.msg);
+        }
+        else {
+          $scope.refreshPedido();
+        }
+      },"json").fail(function() {
+        $scope.hideload();
+        $rootScope.err("Pedido no es accesible");
+        $ionicHistory.goBack();
+      });
+    }
+  });
+
   if (!$scope.pedido && !$scope.pedido.hasOwnProperty("IDOperacion")) {
     $rootScope.err("Pedido no es accesible");
     $ionicHistory.goBack();
   }
 
   $scope.refreshPedido = function() {
-      $scope.showload("obteniendo pedido..."); 
+      $scope.showload("actualizando..."); 
       jQuery.post($localStorage.app.rest+"/sacadores.php?op=getDetalle", { IDOperacion: $scope.pedido.IDOperacion, AnnoProceso: $scope.pedido.AnnoProceso, Correlativo: $scope.pedido.Correlativo }, function(data) {
         $scope.hideload();
         if (data.res == "ERR") {

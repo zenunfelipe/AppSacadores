@@ -13,6 +13,19 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);
 
+      window.cordova.plugins.honeywell.selectDevice('dcs.scanner.imager', () => {
+        console.info('dcs.scanner.imager codebar device connected');
+        window.cordova.plugins.honeywell.claim(() => { 
+          console.info('claim success');
+          window.cordova.plugins.honeywell.register(function(event) {
+            $rootScope.$broadcast('scanner', { data: event });
+          }, function(err) { 
+            console.log(err); 
+          });
+        }, (err) => {
+          console.info(err);
+        });
+      }, (err) => { console.info(err); });
     }
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
@@ -24,8 +37,7 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
   if (!$localStorage.app) { $localStorage.app = app;  }
   if ($localStorage.sacador) { $rootScope.sacador = $localStorage.sacador; }
   
-  $rootScope.viendoDetalle = 0;
-  
+  $rootScope.viendoDetalle = 0; 
   $state.go("main.home");
 
   $rootScope.err = function(msg, cb) {
