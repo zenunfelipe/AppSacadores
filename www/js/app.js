@@ -12,7 +12,8 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
     if (window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);
-
+    }
+    if (window.cordova) {
       window.cordova.plugins.honeywell.selectDevice('dcs.scanner.imager', () => {
         console.info('dcs.scanner.imager codebar device connected');
         window.cordova.plugins.honeywell.claim(() => { 
