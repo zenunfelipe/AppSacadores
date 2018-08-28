@@ -32,7 +32,7 @@ angular.module('andes.controllers', [])
   });
 
   $scope.closeNotification = function() {
-    $scope.modalNotification.close();
+    $scope.modalNotification.hide();
   }
   $scope.$on('scanner', function(event, args) {
     console.log('scanner reader');
@@ -124,9 +124,9 @@ angular.module('andes.controllers', [])
   $scope.close = function() {
     $scope.showload();
     jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarEstado", {
-      AnnoProceso: o.AnnoProceso,
-      IDOperacion: o.IDOperacion,
-      Correlativo: o.Correlativo,
+      AnnoProceso: $scope.pedido.AnnoProceso,
+      IDOperacion: $scope.pedido.IDOperacion,
+      Correlativo: $scope.pedido.Correlativo,
       IDEtapa: 1,
       IDEstado: 5,
       IDSacador: $rootScope.sacador.IDSacador,
