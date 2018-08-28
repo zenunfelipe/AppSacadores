@@ -10,6 +10,7 @@
     <a href="#" class="item item-pedido item-text-wrap {{(pedido.Habilitado == 0 ? 'item-pedido-off' : '')}} {{(pedido.Habilitado == 2 || pedido.Habilitado == 3 ? 'item-pedido-running' : '')}}" ng-click="detalle(pedido)" ng-repeat="pedido in pedidos">
       <div class="pedido-nrodocumento"><i class="fa fa-thumb-tack"></i> Pedido #{{pedido.NroDocumento}}</div>
       <div class="pedido-razonsocial">{{pedido.RazonSocial}}</div>
+      <div ng-if="pedido.ComentariosSacador != ''" class="pedido-comentariosacador">{{pedido.ComentariosSacador}}</div>
     </a>
 
   </ion-content>

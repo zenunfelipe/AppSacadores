@@ -9,11 +9,15 @@ angular.module('andes.controllers', [])
 
   $scope.$on('$ionicView.beforeLeave', function(obj, viewData){
     $rootScope.viendoDetalle = 0;
-    window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
+    if (window.cordova) {
+    	window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); 
+	}
   }); 
   $scope.$on('$ionicView.afterEnter', function(obj, viewData){
     $rootScope.viendoDetalle = 1;
-    window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
+    if (window.cordova) {
+    	window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
+	}
   }); 
 
   $ionicModal.fromTemplateUrl('templates/notification.html', {
@@ -34,22 +38,25 @@ angular.module('andes.controllers', [])
     console.log('scanner reader');
     console.log(args);
     if (args.hasOwnProperty("data") && args.data.success == true) {
+      if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
+      $scope.showload();
       jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
         IDOperacion: $scope.pedido.IDOperacion, 
         AnnoProceso: $scope.pedido.AnnoProceso, 
         Correlativo: $scope.pedido.Correlativo, 
         CodigoBarras: args.data.data,
+        Cantidad: 1,
         IDUsuario: $rootScope.sacador.szUsuario
       }, function(data) {
         $scope.hideload();
         if (data.res == "ERR") {
           navigator.notification.beep(2);
-          window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
           $rootScope.err(data.msg, function() {
-            window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
+            if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
           });
         }
         else {
+          if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
           $scope.detalle = data.PedidoDetalles;
           $scope.itemsPendientes = 0;
           for (var i = 0; i < $scope.detalle.length; i++) {
@@ -58,6 +65,7 @@ angular.module('andes.controllers', [])
         }
       },"json").fail(function() {
         $scope.hideload();
+        if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
         $rootScope.err("Pedido no es accesible");
         $ionicHistory.goBack();
       });
@@ -69,6 +77,39 @@ angular.module('andes.controllers', [])
     $ionicHistory.goBack();
   }
 
+  $scope.deleteItem = function(IDarticulo, Cantidad) {
+      if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
+      $scope.showload();
+      jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
+        IDOperacion: $scope.pedido.IDOperacion, 
+        AnnoProceso: $scope.pedido.AnnoProceso, 
+        Correlativo: $scope.pedido.Correlativo, 
+        CodigoBarras: IDarticulo,
+        Cantidad: (Cantidad * -1),
+        IDUsuario: $rootScope.sacador.szUsuario
+      }, function(data) {
+        $scope.hideload();
+        if (data.res == "ERR") {
+          navigator.notification.beep(2);
+          $rootScope.err(data.msg, function() {
+            if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+          });
+        }
+        else {
+          if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+          $scope.detalle = data.PedidoDetalles;
+          $scope.itemsPendientes = 0;
+          for (var i = 0; i < $scope.detalle.length; i++) {
+            $scope.itemsPendientes += ($scope.detalle[i].Cantidad - data.data[i].CantidadPicking);
+          }
+        }
+      },"json").fail(function() {
+        $scope.hideload();
+        if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+        $rootScope.err("Pedido no es accesible");
+        $ionicHistory.goBack();
+      });
+  }
   $scope.ended = function() {
     // Todo Notifications
     if ($scope.itemsPendientes > 0) {

@@ -228,27 +228,32 @@ ion-content.pedido {
 .item-pedido .pedido-nrodocumento { font-size: 18px; font-weight:bold; padding-bottom: 10px; }
 .item-pedido .pedido-razonsocial { font-size: 15px; }
 .item-pedido .pedido-nrodocumento i { font-size: 22px; }
+.item-pedido .pedido-comentariosacador { font-weight: bold; color: red; }
 
 .popup .popup-head { background: #ebebeb; }
 .popup-container .popup { width: 80%; }
 
 
 /* DETALLE */
-.detalle-subheader { background-color: #c4e4ff; }
+.pedido .list.margin-top {
+	margin-top: 40px;
+}
+.detalle-subheader { background-color: #feff7c; height: 30px; line-height: 30px; }
+.detalle-subheader .title { font-size: 15px; height: 30px; line-height: 30px; }
 .detalle-footer .col { padding: 0; }
 .item-linea { padding: 5px; margin-bottom: 20px; }
+.item-linea.activated { background-color: #FFF !important; }
 .item-linea .row { padding:0; }
 .item-linea .row .col { padding:0; }
 .item-linea .row.row-one { margin-bottom: 12px; margin-top: 8px; }
 .item-linea .row.row-two { margin-bottom: 12px; }
-.item-linea .row.row-three { background-color: #EFEFEF; padding-top:6px; padding-bottom: 6px; text-align: center; }
-.item-linea .row.row-four { padding-top: 8px; }
+.item-linea .row.row-three { background-color: #EFEFEF; padding-top:6px; padding-bottom: 10px; text-align: center; }
+.item-linea .row.row-four { padding-top: 6px; padding-bottom: 6px; padding-left: 5px; background-color: #feff7c; }
 
 .linea-idarticulo { font-weight: bold; border-radius: 5px; padding: 4px; display:inline-block; background-color: #c4e4ff; color: #333; margin:auto; margin-top: 8px; }
 .linea-cantidad { font-size: 18px; display:block;text-align: center; font-weight: bold; }
 .linea-cantidadpicking { font-size: 18px; display:block;text-align: center; font-weight: bold; }
 .linea-head-info { display:block; font-size: 13px; display:block;text-align: center; font-weight: bold; }
-
 .linea-pasillo, .linea-lado, .linea-columna, .linea-fila { font-weight: bold; }
 
 .item-linea .pending { color: red !important; }
@@ -256,3 +261,9 @@ ion-content.pedido {
 
 .linea-cantidad.ended { color: red; }
 .linea-cantidadpicking.ended { color: red; }
+.item-linea .button-picking {
+	padding: 0 5px;
+	min-width: 40px;
+	min-height: 40px;
+	float: right;
+}

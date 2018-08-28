@@ -1,11 +1,11 @@
 <ion-view view-title="Pedido #{{pedido.NroDocumento}}">
-  <ion-header-bar class="bar bar-subheader detalle-subheader">
-    <div class="">
-      <h2 class="title">Tienes {{itemsPendientes}} items pendientes</h2>
+  <ion-header-bar class="bar bar-subheader detalle-subheader" ng-if="pedido.ComentariosSacador != ''">
+    <div>
+      <h2 class="title">{{pedido.ComentariosSacador}}</h2>
     </div>
   </ion-header-bar>
   <ion-content class="pedido" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
-    <div class="list">
+    <div class="list {{pedido.ComentariosSacador != '' ? 'margin-top' : ''}}">
 
       <a class="card item item-text-wrap" href="#" ng-if="detalle.length == 0" style="width: 100%; text-align: left;">
         Pedido sin lineas, si está completado el picking presione terminar
@@ -21,8 +21,22 @@
             <span class="linea-cantidad">{{linea.Cantidad}}</span>
           </div>
           <div class="col-33">
-            <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
-            <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
+            <div class="row" ng-if="linea.CantidadPicking > 0">
+              <div class="col-50">
+                <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
+                <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
+              </div>
+              <div class="col-50">
+                <button class="button button-picking button-assertive icon ion-trash-a" ng-click="deleteItem(linea.IDArticulo, linea.CantidadPicking);"></button>  
+              </div>
+              
+            </div>
+            <div class="row" ng-if="linea.CantidadPicking == 0">            
+              <div class="col">
+                <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
+                <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="row row-two">
@@ -43,10 +57,16 @@
           <div class="col-25">
             <span class="linea-fila">Fila {{linea.Fila}}</span>
           </div>
+          
+        </div>
+        <div class="row row-three" ng-if="linea.DescripcionColor != ''">
+          <div class="col">
+           Color: {{linea.DescripcionColor}}
+          </div>
         </div>
         <!--<div class="linea-linea">{{linea.Linea}}</div>-->       
         <div class="row row-four" ng-if="linea.Nota != ''">
-          <div class="col"><strong>* Nota:</strong> <span class="linea-nota">{{linea.Nota}}</span></div>
+          <div class="col"><strong>Nota:</strong> <span class="linea-nota">{{linea.Nota}}</span></div>
         </div>
       </a>
 
