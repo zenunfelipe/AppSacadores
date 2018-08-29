@@ -42,6 +42,7 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
   if (!$localStorage.app) { $localStorage.app = app;  }
   if ($localStorage.sacador) { $rootScope.sacador = $localStorage.sacador; }
   
+  $rootScope.readmode = 0;
   $rootScope.viendoDetalle = 0; 
   $state.go("main.home");
 
@@ -62,12 +63,12 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
        }
      });
   };
-  $rootScope.ok = function(msg) {
+  $rootScope.ok = function(msg, title, callback, aceptarBtn) {
      var alertPopup = $ionicPopup.alert({
-       title: 'Listo',
+       title: (title ? title : 'Listo'),
        template: (msg ? msg : 'Operación realizada'),
        buttons: [{
-        text: 'Aceptar',
+        text: (aceptarBtn ? aceptarBtn : 'Aceptar'),
         type: 'button-assertive'
         }]
      });
@@ -75,7 +76,12 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
      alertPopup.then(function(res) {
       $("body").removeClass("modal-open");
       alertPopup.close();
+      callback();
      });
+
+     if (callback) {
+      return alertPopup;
+     }
   };
   $rootScope.confirmar = function(msg, callback,no) {
    var confirmPopup = $ionicPopup.confirm({
@@ -174,3 +180,10 @@ function() { // should be altered to suit your needs
       return ("$ "+ret);
     };
 }]);
+
+function fakeScan() {
+  var $body = angular.element(document.body);            // 1
+  var $rootScope = $body.injector().get('$rootScope');   // 2b
+  $rootScope.$broadcast("scanner", { data: {success: true, data: "I0000000010240" } });
+  $rootScope.$apply();
+}

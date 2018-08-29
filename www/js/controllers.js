@@ -6,6 +6,7 @@ angular.module('andes.controllers', [])
   $scope.pedido = $stateParams.pedido;
   $scope.detalle = [];
   $scope.itemsPendientes = 0;
+  $scope.popCloseable = null;
 
   $scope.$on('$ionicView.beforeLeave', function(obj, viewData){
     $rootScope.viendoDetalle = 0;
@@ -37,38 +38,46 @@ angular.module('andes.controllers', [])
   $scope.$on('scanner', function(event, args) {
     console.log('scanner reader');
     console.log(args);
-    if (args.hasOwnProperty("data") && args.data.success == true) {
-      if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
-      $scope.showload();
-      jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
-        IDOperacion: $scope.pedido.IDOperacion, 
-        AnnoProceso: $scope.pedido.AnnoProceso, 
-        Correlativo: $scope.pedido.Correlativo, 
-        CodigoBarras: args.data.data,
-        Cantidad: 1,
-        IDUsuario: $rootScope.sacador.szUsuario
-      }, function(data) {
-        $scope.hideload();
-        if (data.res == "ERR") {
-          navigator.notification.beep(2);
-          $rootScope.err(data.msg, function() {
-            if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
-          });
-        }
-        else {
-          if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
-          $scope.detalle = data.PedidoDetalles;
-          $scope.itemsPendientes = 0;
-          for (var i = 0; i < $scope.detalle.length; i++) {
-            $scope.itemsPendientes += ($scope.detalle[i].Cantidad - data.data[i].CantidadPicking);
+    if ($rootScope.readmode == 0) {
+      console.log('read mode');
+      if (args.hasOwnProperty("data") && args.data.success == true) {
+        if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
+        $scope.showload();
+        jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
+          IDOperacion: $scope.pedido.IDOperacion, 
+          AnnoProceso: $scope.pedido.AnnoProceso, 
+          Correlativo: $scope.pedido.Correlativo, 
+          CodigoBarras: args.data.data,
+          Cantidad: 1,
+          IDUsuario: $rootScope.sacador.szUsuario
+        }, function(data) {
+          $scope.hideload();
+          if (data.res == "ERR") {
+            if (window.cordova) { navigator.notification.beep(1); }
+            $rootScope.err(data.msg, function() {
+              if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+            });
           }
-        }
-      },"json").fail(function() {
-        $scope.hideload();
-        if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
-        $rootScope.err("Pedido no es accesible");
-        $ionicHistory.goBack();
-      });
+          else {
+            if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+            $scope.detalle = data.PedidoDetalles;
+            $scope.itemsPendientes = 0;
+            for (var i = 0; i < $scope.detalle.length; i++) {
+              $scope.itemsPendientes += ($scope.detalle[i].Cantidad - data.data[i].CantidadPicking);
+            }
+          }
+        },"json").fail(function() {
+          $scope.hideload();
+          if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+          $rootScope.err("Pedido no es accesible");
+          $ionicHistory.goBack();
+        });
+      }
+    }
+    else if ($rootScope.readmode == 1) {
+      console.log('delete mode');
+      $scope.popCloseable.close();
+      $scope.deleteItem(args.data.data, -1);
     }
   });
 
@@ -76,8 +85,15 @@ angular.module('andes.controllers', [])
     $rootScope.err("Pedido no es accesible");
     $ionicHistory.goBack();
   }
+  $scope.readDelete = function() {
+    $rootScope.readmode = 1;
+    $scope.popCloseable = $rootScope.ok("Lea el código a reversar","Eliminando un codigo", function() {
+      $rootScope.readmode = 0;
+    }, "Cancelar");
+  };
 
   $scope.deleteItem = function(IDarticulo, Cantidad) {
+      $rootScope.readmode = 0;
       if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
       $scope.showload();
       jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
@@ -85,12 +101,12 @@ angular.module('andes.controllers', [])
         AnnoProceso: $scope.pedido.AnnoProceso, 
         Correlativo: $scope.pedido.Correlativo, 
         CodigoBarras: IDarticulo,
-        Cantidad: (Cantidad * -1),
+        Cantidad: Cantidad,
         IDUsuario: $rootScope.sacador.szUsuario
       }, function(data) {
         $scope.hideload();
         if (data.res == "ERR") {
-          navigator.notification.beep(2);
+          if (window.cordova) { navigator.notification.beep(1); }
           $rootScope.err(data.msg, function() {
             if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
           });

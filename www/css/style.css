@@ -230,7 +230,9 @@ ion-content.pedido {
 .item-pedido .pedido-nrodocumento i { font-size: 22px; }
 .item-pedido .pedido-comentariosacador { font-weight: bold; color: red; }
 
-.popup .popup-head { background: #ebebeb; }
+.popup .popup-head .popup-title { background: #ebebeb;  font-size: 20px; }
+.popup .popup-body span { font-size: 20px; text-align:center; }
+.popup .popup-buttons button { font-size: 20px; text-align:center; }
 .popup-container .popup { width: 80%; }
 
 
@@ -238,7 +240,8 @@ ion-content.pedido {
 .pedido .list.margin-top {
 	margin-top: 40px;
 }
-.detalle-subheader { background-color: #feff7c; height: 30px; line-height: 30px; }
+.detalle-subheader { background-color: #feff7c; }
+.detalle-subheader .row { padding:0; }
 .detalle-subheader .title { font-size: 15px; height: 30px; line-height: 30px; }
 .detalle-footer .col { padding: 0; }
 .item-linea { padding: 5px; margin-bottom: 20px; }
@@ -266,4 +269,11 @@ ion-content.pedido {
 	min-width: 40px;
 	min-height: 40px;
 	float: right;
+}
+.has-nothing {
+	width: 100%;
+    font-size: 30px;
+    text-align: left;
+    line-height: 39px;
+    text-align: center;
 }

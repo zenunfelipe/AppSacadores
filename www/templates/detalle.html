@@ -1,13 +1,18 @@
 <ion-view view-title="Pedido #{{pedido.NroDocumento}}">
-  <ion-header-bar class="bar bar-subheader detalle-subheader" ng-if="pedido.ComentariosSacador != ''">
-    <div>
-      <h2 class="title">{{pedido.ComentariosSacador}}</h2>
+  <ion-header-bar class="bar bar-subheader detalle-subheader">
+    <div class="row">
+     <div class="col-80 item-text-wrap">
+       <strong>{{(pedido.ComentariosSacador == '' ? 'Sin comentarios' : pedido.ComentariosSacador)}}</strong>
+     </div>
+     <div class="col-20 text-right">
+		<button class="button button-picking button-assertive icon ion-trash-a" ng-click="readDelete();"></button>  
+     </div>
     </div>
   </ion-header-bar>
   <ion-content class="pedido" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
-    <div class="list {{pedido.ComentariosSacador != '' ? 'margin-top' : ''}}">
+    <div class="list">
 
-      <a class="card item item-text-wrap" href="#" ng-if="detalle.length == 0" style="width: 100%; font-size: 30px; text-align: left;">
+      <a class="card has-nothing item item-text-wrap" href="#" ng-if="detalle.length == 0">
         Pedido sin lineas, si está completado el picking presione terminar
       </a>
 
@@ -21,6 +26,7 @@
             <span class="linea-cantidad">{{linea.Cantidad}}</span>
           </div>
           <div class="col-33">
+          	<!--
             <div class="row" ng-if="linea.CantidadPicking > 0">
               <div class="col-50">
                 <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
@@ -33,10 +39,13 @@
             </div>
             <div class="row" ng-if="linea.CantidadPicking == 0">            
               <div class="col">
+            -->
                 <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
                 <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
+            <!--
               </div>
             </div>
+            -->
           </div>
         </div>
         <div class="row row-two">
