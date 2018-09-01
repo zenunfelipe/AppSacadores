@@ -5,7 +5,7 @@ var printers = [];
 var popupwifi = null;
 angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
-.run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup) {
+.run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup, $ionicLoading) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -41,10 +41,26 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
       type: 'POST',
       timeout: 3000,
       error: function(xhr) {
+        var $body = angular.element(document.body);            // 1
+        var $rootScope = $body.injector().get('$rootScope');   // 2b
+        $rootScope.hideload();
+        $rootScope.$apply();   
         var event = new CustomEvent("offline", { "detail": "Example" });
         document.dispatchEvent(event);
       }
     });
+  });
+
+  $rootScope.showload = function(text) {
+    $ionicLoading.show({
+      template: '<ion-spinner></ion-spinner><br /><span>'+(text ? text : '')+'</span>'
+    }).then(function(){
+    });
+  };
+  $rootScope.hideload = function(){
+    $ionicLoading.hide().then(function(){
+    });
+  };
 
 
   if (!$localStorage.app) { $localStorage.app = app;  }

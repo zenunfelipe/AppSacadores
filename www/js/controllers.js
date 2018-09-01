@@ -42,7 +42,7 @@ angular.module('andes.controllers', [])
       console.log('read mode');
       if (args.hasOwnProperty("data") && args.data.success == true) {
         if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
-        $scope.showload();
+        $rootScope.showload();
         jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
           IDOperacion: $scope.pedido.IDOperacion, 
           AnnoProceso: $scope.pedido.AnnoProceso, 
@@ -51,7 +51,7 @@ angular.module('andes.controllers', [])
           Cantidad: 1,
           IDUsuario: $rootScope.sacador.szUsuario
         }, function(data) {
-          $scope.hideload();
+          $rootScope.hideload();
           if (data.res == "ERR") {
             if (window.cordova) { navigator.notification.beep(1); }
             $rootScope.err(data.msg, function() {
@@ -67,7 +67,7 @@ angular.module('andes.controllers', [])
             }
           }
         },"json").fail(function() {
-          $scope.hideload();
+          $rootScope.hideload();
           if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
           $rootScope.err("Pedido no es accesible");
           $ionicHistory.goBack();
@@ -95,7 +95,7 @@ angular.module('andes.controllers', [])
   $scope.deleteItem = function(IDarticulo, Cantidad) {
       $rootScope.readmode = 0;
       if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
-      $scope.showload();
+      $rootScope.showload();
       jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
         IDOperacion: $scope.pedido.IDOperacion, 
         AnnoProceso: $scope.pedido.AnnoProceso, 
@@ -104,7 +104,7 @@ angular.module('andes.controllers', [])
         Cantidad: Cantidad,
         IDUsuario: $rootScope.sacador.szUsuario
       }, function(data) {
-        $scope.hideload();
+        $rootScope.hideload();
         if (data.res == "ERR") {
           if (window.cordova) { navigator.notification.beep(1); }
           $rootScope.err(data.msg, function() {
@@ -120,7 +120,7 @@ angular.module('andes.controllers', [])
           }
         }
       },"json").fail(function() {
-        $scope.hideload();
+        $rootScope.hideload();
         if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
         $rootScope.err("Pedido no es accesible");
         $ionicHistory.goBack();
@@ -138,7 +138,7 @@ angular.module('andes.controllers', [])
   }
 
   $scope.close = function() {
-    $scope.showload();
+    $rootScope.showload();
     jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarEstado", {
       AnnoProceso: $scope.pedido.AnnoProceso,
       IDOperacion: $scope.pedido.IDOperacion,
@@ -148,18 +148,18 @@ angular.module('andes.controllers', [])
       IDSacador: $rootScope.sacador.IDSacador,
       IDUsuario: $rootScope.sacador.szUsuario
     }, function(data) {
-      $scope.hideload();
+      $rootScope.hideload();
       $ionicHistory.goBack();
     }).fail(function() {
-      $scope.hideload();
+      $rootScope.hideload();
       $rootScope.err();
     });
   }
 
   $scope.refreshPedido = function() {
-      $scope.showload("actualizando..."); 
+      $rootScope.showload("actualizando..."); 
       jQuery.post($localStorage.app.rest+"/sacadores.php?op=getDetalle", { IDOperacion: $scope.pedido.IDOperacion, AnnoProceso: $scope.pedido.AnnoProceso, Correlativo: $scope.pedido.Correlativo }, function(data) {
-        $scope.hideload();
+        $rootScope.hideload();
         if (data.res == "ERR") {
           $rootScope.err(data.msg);
         }
@@ -171,7 +171,7 @@ angular.module('andes.controllers', [])
           }
         }
       },"json").fail(function() {
-        $scope.hideload();
+        $rootScope.hideload();
         $rootScope.err("Pedido no es accesible");
         $ionicHistory.goBack();
       });
@@ -200,7 +200,7 @@ angular.module('andes.controllers', [])
     }
     else if (o.Habilitado == 1) {
       $rootScope.confirmar('¿Desea marcar este pedido como pedido en curso?', function() {
-        $scope.showload("Iniciando pedido...");
+        $rootScope.showload("Iniciando pedido...");
         jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarEstado", {
           AnnoProceso: o.AnnoProceso,
           IDOperacion: o.IDOperacion,
@@ -211,10 +211,10 @@ angular.module('andes.controllers', [])
           IDUsuario: $rootScope.sacador.szUsuario
         }, function(data) {
           $rootScope.pedidos = [];
-          $scope.hideload();
+          $rootScope.hideload();
           $state.go("main.detalle", { pedido: o });
         }).fail(function() {
-          $scope.hideload();
+          $rootScope.hideload();
           $rootScope.err();
         });
       });
@@ -249,17 +249,6 @@ angular.module('andes.controllers', [])
   }
 
 
-  $scope.showload = function(text) {
-    $ionicLoading.show({
-      template: '<ion-spinner></ion-spinner><br /><span>'+(text ? text : '')+'</span>'
-    }).then(function(){
-    });
-  };
-  $scope.hideload = function(){
-    $ionicLoading.hide().then(function(){
-    });
-  };
-
   $scope.down = function() {
 
     $rootScope.segs--;
@@ -281,9 +270,9 @@ angular.module('andes.controllers', [])
       $rootScope.refreshing = 1;
       $timeout.cancel($rootScope.reloj);
 
-      if (!isPullToDown) { $scope.showload("obteniendo pedidos..."); }
+      if (!isPullToDown) { $rootScope.showload("obteniendo pedidos..."); }
       jQuery.post($localStorage.app.rest+"/sacadores.php?op=getPedidos", { id: $rootScope.sacador.IDSacador }, function(data) {
-        $scope.hideload();
+        $rootScope.hideload();
         
         if (data.res == "ERR") {
           $scope.emptyMessage = data.msg;
@@ -306,16 +295,16 @@ angular.module('andes.controllers', [])
     if (!$localStorage.sacador) {
       setTimeout(function() { 
         $scope.modalConfiguracion.show();
-        $scope.showload();
+        $rootScope.showload();
         jQuery.post($localStorage.app.rest+"/sacadores.php?op=getSacadores", { }, function(data) {
-          $scope.hideload();
+          $rootScope.hideload();
           if (data.res == "OK") {
             $rootScope.sacadores = data.data;
           } else {
             $rootScope.err(data.msg);  
           }
         },"json").fail(function(xhr) {
-          $scope.hideload();
+          $rootScope.hideload();
           $rootScope.err(xhr.responseText);
         });
       },500);
