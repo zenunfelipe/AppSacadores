@@ -346,19 +346,20 @@ angular.module('andes.controllers', [])
     }
   }
 
-  $scope.wifireader = function() {
-    $scope.wifi = "Interval called!";
-    WifiWizard2.scan({numLevels: 10}).then(function(networks) {
-      $scope.wifi2 = "Success call";
-      $scope.wifi = "play in 5 seconds";
-      $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
-      $timeout($scope.wifireader(), 5000);
-    }, function(x) {
-      console.log('err scan',x);
-    });
-  }
   if (window.cordova) {
-    $timeout($scope.wifireader(), 10000);
+    $interval(function() {
+      $scope.wifi = "Interval called!";
+      if (WifiWizard2) {
+        $scope.wifi2 = "WifiWizard2 is OK!";
+        WifiWizard2.scan({numLevels: 10}).then(function(networks) {
+          $scope.wifi2 = "Success call";
+          $scope.wifi = "play in 5 seconds";
+          $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
+        }, function(x) {
+          $scope.wifi3 = 'err scan '+x;
+        });
+      }
+    }, 6000);
   }
 
 
