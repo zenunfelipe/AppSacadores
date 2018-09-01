@@ -2,7 +2,7 @@ app = {
   rest:  "http://192.168.200.125:8085/bodega"
 };
 var printers = [];
-
+var popupwifi = null;
 angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
 .run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup) {
@@ -45,6 +45,22 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
   $rootScope.readmode = 0;
   $rootScope.viendoDetalle = 0; 
   $state.go("main.home");
+
+  $rootScope.nowifi = function() { 
+    popupwifi = $ionicPopup.alert({
+     title: "SIN RED",
+     template: "ESPERANDO CONEXION",
+     buttons: {
+      text: '<b>OK</b>',
+      type: 'button-positive',
+      onTap: function(e) { e.preventDefault(); }
+     }
+    });
+
+  }
+  $rootScope.siwifi = function() { 
+    if (typeof popupwifi.close === 'function') { popupwifi.close(); }
+  }
 
   $rootScope.err = function(msg, cb) {
      var alertPopup = $ionicPopup.alert({
@@ -134,6 +150,51 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
     });
   };
 
+  $rootScope.wifiread = function() {
+    if (WifiWizard2) {
+       WifiWizard2.scan().then(function(networks) {
+        var connectTo = "";
+        for (var i=0;i<networks.length;i++) {
+          if (networks[i].frequency < 3000 && networks[i].level >= -67) {
+            connectTo = networks[i].SSID;
+            break;
+          }
+        }
+        console.log('ConnectTo Result: '+connectTo);
+        if (connectTo != "") {
+          var x = WifiWizard2.isConnectedToInternet();
+          x.then(function(z) {
+            if (z == "NOT_CONNECTED_TO_INTERNET") {
+              var y = WifiWizard2.connect(connectTo, true, "@ndesbodeg@", "WPA", false);
+              y.then(function() {
+                console.log("WifiWizard2 connected");
+                $rootScope.siwifi();
+              }, function() {
+                console.log("WifiWizard2.connect ("+connectTo+") fail - wifiread again");
+                $rootScope.wifiread();
+              });
+            }
+            else {
+              console.log("WifiWizard2 != NOT_CONNECTED_TO_INTERNET ("+z+"), SiWifi is call!");
+              $rootScope.siwifi();
+            }
+          }, function() {
+            console.log("WifiWizard2 isConnectedToInternet fail - wifiread again");
+            $rootScope.wifiread();
+          });
+        }
+        else {
+          console.log("WifiWizard2 connect to nothing! - wifiread again");
+          $rootScope.wifiread();
+        }
+      }, function(x) {
+        console.log("WifiWizard2 no scan... wifiread again!");
+        $rootScope.wifiread();
+      });
+    } else {
+      console.log('Not ready WifiWizard2');
+    }
+  }
 })
 
 .config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
@@ -180,6 +241,29 @@ function() { // should be altered to suit your needs
       return ("$ "+ret);
     };
 }]);
+
+
+document.addEventListener("offline", function() {
+  var $body = angular.element(document.body);            // 1
+  var $rootScope = $body.injector().get('$rootScope');   // 2b
+  $rootScope.nowifi();
+  if (window.cordova && $rootScope.viendoDetalle == 1) {
+    window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
+    $rootScope.wifiread();
+  }
+  
+  $rootScope.$apply();
+}, false);
+
+document.addEventListener("online", function() {
+  var $body = angular.element(document.body);            // 1
+  var $rootScope = $body.injector().get('$rootScope');   // 2b
+  $rootScope.siwifi();
+  if (window.cordova && $rootScope.viendoDetalle == 1) {
+    window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
+  }
+  $rootScope.$apply();
+}, false);
 
 function fakeScan() {
   var $body = angular.element(document.body);            // 1

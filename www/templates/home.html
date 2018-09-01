@@ -13,17 +13,6 @@
       <div ng-if="pedido.ComentariosSacador != ''" class="pedido-comentariosacador">{{pedido.ComentariosSacador}}</div>
     </a>
 
-    <div ng-if="$root.sacador.NombreSacador == 'Oficina'">
-      <h2>Wifi Debugger</h2>
-      <p>{{wifi}}</p>
-      <p>{{wifi2}}</p>
-      <p ng-repeat="wifis in wifi3">
-          SSID: {{wifis.SSID}}<br />
-          level: {{wifis.level}}<br />
-          time: {{wifis.timestamp}}<hr>
-      </p>
-    </div>
-
   </ion-content>
   <ion-footer-bar class="bar-stable" style="height: 55px;">
     <div class="row" style="padding:0;">

@@ -228,9 +228,6 @@ angular.module('andes.controllers', [])
 
   $ionicSideMenuDelegate.canDragContent(false);
 
-  $rootScope.wifi = "The Wifi controller is OK";
-  $rootScope.wifi2 = "..";
-  $rootScope.wifi3 = [];
   $rootScope.refreshing = 0;
   $rootScope.segs = 59;
   $rootScope.reloj = null;
@@ -345,24 +342,6 @@ angular.module('andes.controllers', [])
       $rootScope.err("Debes seleccionar un sacador");
     }
   }
-
-  if (window.cordova) {
-    $interval(function() {
-      $scope.wifi = "Interval called!";
-      if (WifiWizard2) {
-        $scope.wifi2 = "WifiWizard2 is OK!";
-        WifiWizard2.scan({numLevels: 10}).then(function(networks) {
-          $scope.wifi2 = "Success call";
-          $scope.wifi = "play in 5 seconds";
-          $scope.wifi3 = networks;
-        }, function(x) {
-          $scope.wifi2 = 'err scan '+x;
-        });
-      }
-    }, 6000);
-  }
-
-
 })
 
 String.prototype.toBytes = function() {
