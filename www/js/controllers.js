@@ -239,10 +239,21 @@ angular.module('andes.controllers', [])
   $rootScope.emptyMessage = "";
 
   // Run the Wifi Scanner
+  $scope.wifireader = function() {
+    $scope.wifi = "Interval called!";
+    WifiWizard2.scan({numLevels: 5}).then(function(networks) {
+      $scope.wifi2 = "Success call";
+      $scope.wifi = "play in 5 seconds";
+      $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
+      $timeout($scope.wifireader(), 5000);
+    }, function(x) {
+      console.log('err scan',x);
+    });
+  }
   if (window.cordova) {
     $rootScope.intervalRunning = 1;
-    $interval(function() {
-      $scope.wifi = "Interval called!";
+    $scope.wifireader();
+      /*
       cordovaNetworkManager.startScan(function() {
         $scope.wifi2 = "Success start scan call";
       }, function() {
@@ -258,7 +269,8 @@ angular.module('andes.controllers', [])
           $scope.wifi3 = "Fail on get scan results";
         });
       },6000);
-    }, 8000);
+      */
+    
   }
 
   // Start controller
