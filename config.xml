@@ -64,6 +64,7 @@
     </config-file>
   </platform>
   <plugin spec="https://github.com/rosses/cordova-honeywell-scanner.git" source="git" />
+  <plugin spec="https://github.com/hoerresb/WifiWizard.git" source="git" />
   <plugin name="cordova-plugin-statusbar" />
   <plugin name="cordova-custom-config" spec="1.2.6"/>
   <plugin name="cordova-plugin-dialogs" spec="1.2.1"/>

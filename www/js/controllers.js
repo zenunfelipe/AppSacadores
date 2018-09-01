@@ -224,16 +224,39 @@ angular.module('andes.controllers', [])
 })
 
 
-.controller('MainCtrl', function($scope, $state, $localStorage, $timeout, $ionicModal, $rootScope, $location, $ionicLoading, $ionicSideMenuDelegate) {
+.controller('MainCtrl', function($scope, $state, $localStorage, $timeout, $interval, $ionicModal, $rootScope, $location, $ionicLoading, $ionicSideMenuDelegate) {
 
   $ionicSideMenuDelegate.canDragContent(false);
 
+  $rootScope.wifi = "The Wifi controller is OK";
+  $rootScope.wifi2 = "..";
+  $rootScope.wifi3 = "....";
   $rootScope.refreshing = 0;
   $rootScope.segs = 59;
   $rootScope.reloj = null;
   $rootScope.pedidos = [];
   $rootScope.sacadores = [];
   $rootScope.emptyMessage = "";
+
+  // Run the Wifi Scanner
+  if (window.cordova) {
+    $rootScope.intervalRunning = 1;
+    $interval(function() {
+      $scope.wifi = "Interval called!";
+      WifiWizard.startScan(function() {
+        $scope.wifi2 = "Success start scan call";
+      }, function() {
+        $scope.wifi2 = "fail start scan call";
+      });
+      $timeout(function() {
+        WifiWizard.getScanResults({ numLevels: 10 }, function(networks) {
+          $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
+        }, function() {
+          $scope.wifi3 = "Fail on get scan results";
+        });
+      },6000);
+    }, 7000);
+  }
 
   // Start controller
 
