@@ -36,7 +36,15 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-  });
+
+    jQuery.ajaxSetup({
+      type: 'POST',
+      timeout: 3000,
+      error: function(xhr) {
+        var event = new CustomEvent("offline", { "detail": "Example" });
+        document.dispatchEvent(event);
+      }
+    });
 
 
   if (!$localStorage.app) { $localStorage.app = app;  }
@@ -59,7 +67,14 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
   }
   $rootScope.siwifi = function() { 
-    if (typeof popupwifi.close === 'function') { popupwifi.close(); }
+    var event = new CustomEvent("online", { "detail": "Example" });
+    document.dispatchEvent(event);
+    try {
+      if (typeof popupwifi.close === 'function') { popupwifi.close(); }
+    } 
+    catch(err) {
+
+    }
   }
 
   $rootScope.err = function(msg, cb) {
@@ -251,7 +266,6 @@ document.addEventListener("offline", function() {
     window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
     $rootScope.wifiread();
   }
-  
   $rootScope.$apply();
 }, false);
 
