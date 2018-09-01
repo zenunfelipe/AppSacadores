@@ -17,7 +17,11 @@
       <h2>Wifi Debugger</h2>
       <p>{{wifi}}</p>
       <p>{{wifi2}}</p>
-      <p>{{wifi3}}</p>
+      <p ng-repeat="wifis in wifi3">
+          SSID: {{wifis.SSID}}<br />
+          level: {{wifis.level}}<br />
+          time: {{wifis.timestamp}}<hr>
+      </p>
     </div>
 
   </ion-content>

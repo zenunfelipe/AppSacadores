@@ -230,7 +230,7 @@ angular.module('andes.controllers', [])
 
   $rootScope.wifi = "The Wifi controller is OK";
   $rootScope.wifi2 = "..";
-  $rootScope.wifi3 = "....";
+  $rootScope.wifi3 = [];
   $rootScope.refreshing = 0;
   $rootScope.segs = 59;
   $rootScope.reloj = null;
@@ -354,9 +354,9 @@ angular.module('andes.controllers', [])
         WifiWizard2.scan({numLevels: 10}).then(function(networks) {
           $scope.wifi2 = "Success call";
           $scope.wifi = "play in 5 seconds";
-          $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
+          $scope.wifi3 = networks;
         }, function(x) {
-          $scope.wifi3 = 'err scan '+x;
+          $scope.wifi2 = 'err scan '+x;
         });
       }
     }, 6000);
