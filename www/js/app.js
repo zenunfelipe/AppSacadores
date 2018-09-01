@@ -286,9 +286,8 @@ document.addEventListener("offline", function() {
 }, false);
 
 document.addEventListener("online", function() {
-  var $body = angular.element(document.body);            // 1
-  var $rootScope = $body.injector().get('$rootScope');   // 2b
-  $rootScope.siwifi();
+  var $body = angular.element(document.body);
+  var $rootScope = $body.injector().get('$rootScope');
   if (window.cordova && $rootScope.viendoDetalle == 1) {
     window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
   }
