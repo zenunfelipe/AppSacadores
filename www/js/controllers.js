@@ -238,41 +238,6 @@ angular.module('andes.controllers', [])
   $rootScope.sacadores = [];
   $rootScope.emptyMessage = "";
 
-  // Run the Wifi Scanner
-  $scope.wifireader = function() {
-    $scope.wifi = "Interval called!";
-    WifiWizard2.scan({numLevels: 5}).then(function(networks) {
-      $scope.wifi2 = "Success call";
-      $scope.wifi = "play in 5 seconds";
-      $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
-      $timeout($scope.wifireader(), 5000);
-    }, function(x) {
-      console.log('err scan',x);
-    });
-  }
-  if (window.cordova) {
-    $rootScope.intervalRunning = 1;
-    $scope.wifireader();
-      /*
-      cordovaNetworkManager.startScan(function() {
-        $scope.wifi2 = "Success start scan call";
-      }, function() {
-        $scope.wifi2 = "fail start scan call";
-      });
-
-      $timeout(function() {
-        $scope.wifi2 = "standalone";
-
-        cordovaNetworkManager.getScanResults({ numLevels: 10 }, function(networks) {
-          $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
-        }, function() {
-          $scope.wifi3 = "Fail on get scan results";
-        });
-      },6000);
-      */
-    
-  }
-
   // Start controller
 
   $ionicModal.fromTemplateUrl('templates/config.html', {
@@ -380,6 +345,23 @@ angular.module('andes.controllers', [])
       $rootScope.err("Debes seleccionar un sacador");
     }
   }
+
+  $scope.wifireader = function() {
+    $scope.wifi = "Interval called!";
+    WifiWizard2.scan({numLevels: 10}).then(function(networks) {
+      $scope.wifi2 = "Success call";
+      $scope.wifi = "play in 5 seconds";
+      $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
+      $timeout($scope.wifireader(), 5000);
+    }, function(x) {
+      console.log('err scan',x);
+    });
+  }
+  if (window.cordova) {
+    $rootScope.intervalRunning = 1;
+    $timeout($scope.wifireader(), 5000);
+  }
+
 
 })
 
