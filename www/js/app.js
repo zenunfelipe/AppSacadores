@@ -6,7 +6,7 @@ var popupwifi = null;
 var WifiWizard2 = null;
 angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
-.run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup, $ionicLoading) {
+.run(function($ionicPlatform, $rootScope, $ionicHistory, $timeout, $state, $localStorage, $ionicPopup, $ionicLoading) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -200,8 +200,15 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
               $rootScope.siwifi();
             }
           }, function() {
-            console.log("WifiWizard2 isConnectedToInternet fail - wifiread again");
-            $rootScope.wifiread();
+            console.log("WifiWizard2 isConnectedToInternet fail - connecting to "+connectTo);
+              var y = WifiWizard2.connect(connectTo, true, "@ndesbodeg@", "WPA", false);
+              y.then(function() {
+                console.log("WifiWizard2 connected");
+                $rootScope.siwifi();
+              }, function() {
+                console.log("WifiWizard2.connect ("+connectTo+") fail - wifiread again");
+                $rootScope.wifiread();
+              });
           });
         }
         else {
