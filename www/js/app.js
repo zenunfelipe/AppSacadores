@@ -36,19 +36,6 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-
-    jQuery.ajaxSetup({
-      type: 'POST',
-      timeout: 3000,
-      error: function(xhr) {
-        var $body = angular.element(document.body);            // 1
-        var $rootScope = $body.injector().get('$rootScope');   // 2b
-        $rootScope.hideload();
-        $rootScope.$apply();   
-        var event = new CustomEvent("offline", { "detail": "Example" });
-        document.dispatchEvent(event);
-      }
-    });
   });
 
   $rootScope.showload = function(text) {
@@ -183,10 +170,12 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
   $rootScope.wifiread = function() {
     if (WifiWizard2) {
+       console.log("WifiWizard2 starting");
        WifiWizard2.scan().then(function(networks) {
         var connectTo = "";
+        var enables = ["BodegaM","Rebicion","bsupermercado","nortponiente","BodegaI"];
         for (var i=0;i<networks.length;i++) {
-          if (networks[i].frequency < 3000 && networks[i].level >= -67) {
+          if (networks[i].frequency < 3000 && networks[i].level >= -67 && enables.indexOf(networks[i].SSID) > -1) {
             connectTo = networks[i].SSID;
             break;
           }
@@ -278,9 +267,9 @@ document.addEventListener("offline", function() {
   var $body = angular.element(document.body);            // 1
   var $rootScope = $body.injector().get('$rootScope');   // 2b
   $rootScope.nowifi();
+  if (window.cordova) { $rootScope.wifiread(); }
   if (window.cordova && $rootScope.viendoDetalle == 1) {
     window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
-    $rootScope.wifiread();
   }
   $rootScope.$apply();
 }, false);
@@ -301,3 +290,16 @@ function fakeScan() {
   $rootScope.$broadcast("scanner", { data: {success: true, data: "I0000000010240" } });
   $rootScope.$apply();
 }
+jQuery.ajaxSetup({
+  type: 'POST',
+  timeout: 3000,
+  error: function(xhr) {
+    console.log('AjaxSetup Error');
+    var $body = angular.element(document.body);            // 1
+    var $rootScope = $body.injector().get('$rootScope');   // 2b
+    $rootScope.hideload();
+    $rootScope.$apply();   
+    var event = new CustomEvent("offline", { "detail": "Example" });
+    document.dispatchEvent(event);
+  }
+});
