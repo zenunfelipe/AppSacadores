@@ -358,8 +358,7 @@ angular.module('andes.controllers', [])
     });
   }
   if (window.cordova) {
-    $rootScope.intervalRunning = 1;
-    $timeout($scope.wifireader(), 5000);
+    $timeout($scope.wifireader(), 10000);
   }
 
 
