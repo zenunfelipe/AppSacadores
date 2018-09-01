@@ -4,8 +4,13 @@
 </ion-header-bar>
 <ion-content>
   <br /><br />
+  <div ng-repeat="notification in notificationlist" style="padding: 20px; font-size: 20px;">
+  <h4>{{cortarFecha(notification.FechaActualizacion)}}</h4>
+  <p>{{notification.Notificacion}}</p>
+  <p>Nota: {{notification.Nota}}</p>
   <br /><br />
-  <br /><br />
+  </div>
+
   <button class="button button-block button-assertive" ng-click="closeNotification();">
 	Cerrar
   </button>

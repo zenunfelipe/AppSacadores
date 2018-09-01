@@ -55,6 +55,7 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
   if ($localStorage.sacador) { $rootScope.sacador = $localStorage.sacador; }
 
   $rootScope.readmode = 0;
+  $rootScope.notificaciones = 0; 
   $rootScope.viendoDetalle = 0; 
   $state.go("main.home");
 

@@ -2,24 +2,88 @@
 angular.module('andes.controllers', [])
 
 
-.controller('DetalleCtrl', function($scope, $state, $rootScope, $ionicHistory, $localStorage, $location, $ionicModal, $timeout, $ionicLoading, $ionicPopup, $stateParams) {
+.controller('DetalleCtrl', function($scope, $state, $rootScope, $ionicHistory, $localStorage, $location, $ionicModal, $timeout, $interval, $ionicLoading, $ionicPopup, $stateParams) {
   $scope.pedido = $stateParams.pedido;
   $scope.detalle = [];
   $scope.itemsPendientes = 0;
+  $rootScope.notificaciones = 0;
   $scope.popCloseable = null;
+  $scope.notificationlist = [];
+  $scope.int = null;
+  $scope.readingNotification = 0;
+  $scope.reading = { Linea: 0, LineaDetalle: 0 };
+
+
+  $scope.getNotificaciones = function() {
+    jQuery.ajax({
+      url: $localStorage.app.rest+"/sacadores.php?op=getNotificaciones&sacador="+$rootScope.sacador.IDSacador+'&AnnoProceso='+$scope.pedido.AnnoProceso+'&IDOperacion='+$scope.pedido.IDOperacion+'&Correlativo='+$scope.pedido.Correlativo, 
+      error: function(){
+        //nothing... (fix ajaxSetup default!!!)
+        $scope.int = $timeout(function() { $scope.getNotificaciones(); }, 5000);
+      },
+      success: function(data){
+        $rootScope.notificaciones = data.data.length;
+        $scope.notificationlist = data.data;
+
+        if (data.Eliminado == 1) {
+          $rootScope.err("<h1>"+data.EliminadoMensaje+"</h1>");
+          $ionicHistory.goBack();
+        }
+        else {
+          var alertaEnviada = 0;
+          for (var i = 0; i < $scope.notificationlist.length;i++) {
+            if ($scope.notificationlist[i].SiLeidoPicking == 0 && $scope.readingNotification == 0 && $rootScope.viendoDetalle == 1) {
+              alertaEnviada = 1;
+              if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
+              $scope.reading = { Linea: $scope.notificationlist[i].Linea, LineaDetalle: $scope.notificationlist[i].LineaDetalle };
+              $rootScope.ok($scope.notificationlist[i].Notificacion+"<br><br>Nota del vendedor: "+$scope.notificationlist[i].Nota, "NOTIFICACION", function() {
+                $scope.refreshPedido();
+                jQuery.ajax({
+                  url: $localStorage.app.rest+"/sacadores.php?op=okNotificaciones&sacador="+$rootScope.sacador.IDSacador+'&AnnoProceso='+$scope.pedido.AnnoProceso+'&IDOperacion='+$scope.pedido.IDOperacion+'&Correlativo='+$scope.pedido.Correlativo+'&Linea='+$scope.reading.Linea+'&LineaDetalle='+$scope.reading.LineaDetalle, 
+                  error: function(){
+                    // nothing (prevent wifi error)
+                    $scope.int = $timeout(function() { $scope.getNotificaciones(); }, 5000);
+                  },
+                  success: function(data) {
+                    $scope.int = $timeout(function() { $scope.getNotificaciones(); }, 5000);
+                  },
+                  timeout: 3000
+                });
+                if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+              }, "OK, LEIDO");
+              break;
+            }
+          }
+        }
+
+        if (alertaEnviada == 0) {
+          $scope.int = $timeout(function() { $scope.getNotificaciones(); }, 5000);
+        }
+      },
+      timeout: 3000
+    });
+  }
+
+  $scope.cortarFecha = function(x) {
+    return x.substring(0,16);
+  };
+
+  $scope.getNotificaciones();
+
 
   $scope.$on('$ionicView.beforeLeave', function(obj, viewData){
     $rootScope.viendoDetalle = 0;
-    if (window.cordova) {
-    	window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); 
-	}
+    if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
+    $timeout.cancel($scope.int);
   }); 
   $scope.$on('$ionicView.afterEnter', function(obj, viewData){
     $rootScope.viendoDetalle = 1;
-    if (window.cordova) {
-    	window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
-	}
+    if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
   }); 
+
+  $scope.$on('modal.hidden', function() {
+    $scope.readingNotification = 0;
+  });
 
   $ionicModal.fromTemplateUrl('templates/notification.html', {
     scope: $scope,
@@ -29,6 +93,7 @@ angular.module('andes.controllers', [])
   });
 
   $scope.$on("open-notification", function(event, args) {
+    $scope.readingNotification = 1;
     $scope.modalNotification.show();
   });
 
