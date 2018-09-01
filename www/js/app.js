@@ -3,6 +3,7 @@ app = {
 };
 var printers = [];
 var popupwifi = null;
+var WifiWizard2 = null;
 angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
 .run(function($ionicPlatform, $rootScope, $ionicHistory, $state, $localStorage, $ionicPopup, $ionicLoading) {
@@ -59,8 +60,8 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
 
   $rootScope.nowifi = function() { 
     popupwifi = $ionicPopup.alert({
-     title: "SIN RED",
-     template: "ESPERANDO CONEXION",
+     title: "SIN RED DISPONIBLE",
+     template: "INTENTANDO CONECTAR WIFI",
      buttons: {
       text: '<b>OK</b>',
       type: 'button-positive',
@@ -212,7 +213,10 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
         $rootScope.wifiread();
       });
     } else {
-      console.log('Not ready WifiWizard2');
+      console.log('Not ready WifiWizard2, triying in 5 seconds');
+      $timeout(function() {
+        $rootScope.wifiread();
+      }, 5000);
     }
   }
 })
