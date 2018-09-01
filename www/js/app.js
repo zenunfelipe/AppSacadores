@@ -307,6 +307,7 @@ jQuery.ajaxSetup({
     console.log('AjaxSetup Error');
     var $body = angular.element(document.body);            // 1
     var $rootScope = $body.injector().get('$rootScope');   // 2b
+    $rootScope.refreshing = 0;
     $rootScope.hideload();
     $rootScope.$apply();   
     var event = new CustomEvent("offline", { "detail": "Example" });
