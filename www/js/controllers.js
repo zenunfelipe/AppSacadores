@@ -243,19 +243,22 @@ angular.module('andes.controllers', [])
     $rootScope.intervalRunning = 1;
     $interval(function() {
       $scope.wifi = "Interval called!";
-      WifiWizard.startScan(function() {
+      cordovaNetworkManager.startScan(function() {
         $scope.wifi2 = "Success start scan call";
       }, function() {
         $scope.wifi2 = "fail start scan call";
       });
+
       $timeout(function() {
-        WifiWizard.getScanResults({ numLevels: 10 }, function(networks) {
+        $scope.wifi2 = "standalone";
+
+        cordovaNetworkManager.getScanResults({ numLevels: 10 }, function(networks) {
           $scope.wifi3 = "<pre>"+JSON.stringify(networks, null, 4)+"</pre>";
         }, function() {
           $scope.wifi3 = "Fail on get scan results";
         });
       },6000);
-    }, 7000);
+    }, 8000);
   }
 
   // Start controller
