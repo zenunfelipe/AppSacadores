@@ -71,6 +71,7 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
     });
 
   }
+
   $rootScope.siwifi = function() { 
     var event = new CustomEvent("online", { "detail": "Example" });
     document.dispatchEvent(event);
@@ -278,20 +279,24 @@ function() { // should be altered to suit your needs
 document.addEventListener("offline", function() {
   var $body = angular.element(document.body);            // 1
   var $rootScope = $body.injector().get('$rootScope');   // 2b
+  /*
   $rootScope.nowifi();
   if (window.cordova) { $rootScope.wifiread(); }
   if (window.cordova && $rootScope.viendoDetalle == 1) {
     window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled'));
   }
   $rootScope.$apply();
+  */
 }, false);
 
 document.addEventListener("online", function() {
   var $body = angular.element(document.body);
   var $rootScope = $body.injector().get('$rootScope');
+  /*
   if (window.cordova && $rootScope.viendoDetalle == 1) {
     window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled'));
   }
+  */
   $rootScope.$apply();
 }, false);
 
@@ -306,12 +311,14 @@ jQuery.ajaxSetup({
   timeout: 3000,
   error: function(xhr) {
     console.log('AjaxSetup Error');
+    
     var $body = angular.element(document.body);            // 1
     var $rootScope = $body.injector().get('$rootScope');   // 2b
     $rootScope.refreshing = 0;
     $rootScope.hideload();
+    $rootScope.err("Problema de conexion intente denuevo");
     $rootScope.$apply();   
-    var event = new CustomEvent("offline", { "detail": "Example" });
-    document.dispatchEvent(event);
+    //var event = new CustomEvent("offline", { "detail": "Example" });
+    //document.dispatchEvent(event);
   }
 });

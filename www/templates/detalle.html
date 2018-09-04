@@ -26,26 +26,26 @@
             <span class="linea-cantidad">{{linea.Cantidad}}</span>
           </div>
           <div class="col-33">
-          	<!--
-            <div class="row" ng-if="linea.CantidadPicking > 0">
+            
+            <div class="row" ng-if="$root.sacador.NombreSacador == 'Oficina'">
               <div class="col-50">
                 <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
                 <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
               </div>
               <div class="col-50">
-                <button class="button button-picking button-assertive icon ion-trash-a" ng-click="deleteItem(linea.IDArticulo, linea.CantidadPicking);"></button>  
+                <button class="button button-picking button-royal icon ion-wand" ng-click="magic(linea.IDArticulo, linea.Cantidad);"></button>  
               </div>
               
             </div>
-            <div class="row" ng-if="linea.CantidadPicking == 0">            
+            <div class="row" ng-if="$root.sacador.NombreSacador != 'Oficina'">            
               <div class="col">
-            -->
+            
                 <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
                 <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
-            <!--
+            
               </div>
             </div>
-            -->
+            
           </div>
         </div>
         <div class="row row-two">

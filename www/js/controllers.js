@@ -128,7 +128,7 @@ angular.module('andes.controllers', [])
             $scope.detalle = data.PedidoDetalles;
             $scope.itemsPendientes = 0;
             for (var i = 0; i < $scope.detalle.length; i++) {
-              $scope.itemsPendientes += ($scope.detalle[i].Cantidad - data.data[i].CantidadPicking);
+              $scope.itemsPendientes += ($scope.detalle[i].Cantidad - $scope.detalle[i].CantidadPicking);
             }
           }
         },"json").fail(function() {
@@ -157,6 +157,38 @@ angular.module('andes.controllers', [])
     }, "Cancelar");
   };
 
+  $scope.magic = function(IDarticulo, Cantidad) {
+    $rootScope.showload();
+    jQuery.post($localStorage.app.rest+"/sacadores.php?op=actualizarPicking", { 
+      IDOperacion: $scope.pedido.IDOperacion, 
+      AnnoProceso: $scope.pedido.AnnoProceso, 
+      Correlativo: $scope.pedido.Correlativo, 
+      CodigoBarras: IDarticulo,
+      Cantidad: (parseInt(Cantidad) || 0),
+      IDUsuario: $rootScope.sacador.szUsuario
+    }, function(data) {
+      $rootScope.hideload();
+      if (data.res == "ERR") {
+        if (window.cordova) { navigator.notification.beep(1); }
+        $rootScope.err(data.msg, function() {
+          if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+        });
+      }
+      else {
+        if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+        $scope.detalle = data.PedidoDetalles;
+        $scope.itemsPendientes = 0;
+        for (var i = 0; i < $scope.detalle.length; i++) {
+          $scope.itemsPendientes += ($scope.detalle[i].Cantidad - $scope.detalle[i].CantidadPicking);
+        }
+      }
+    },"json").fail(function() {
+      $rootScope.hideload();
+      if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
+      $rootScope.err("Pedido no es accesible");
+      $ionicHistory.goBack();
+    });
+  };
   $scope.deleteItem = function(IDarticulo, Cantidad) {
       $rootScope.readmode = 0;
       if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
@@ -181,7 +213,7 @@ angular.module('andes.controllers', [])
           $scope.detalle = data.PedidoDetalles;
           $scope.itemsPendientes = 0;
           for (var i = 0; i < $scope.detalle.length; i++) {
-            $scope.itemsPendientes += ($scope.detalle[i].Cantidad - data.data[i].CantidadPicking);
+            $scope.itemsPendientes += ($scope.detalle[i].Cantidad - $scope.detalle[i].CantidadPicking);
           }
         }
       },"json").fail(function() {
@@ -232,7 +264,7 @@ angular.module('andes.controllers', [])
           $scope.detalle = data.data;
           $scope.itemsPendientes = 0;
           for (var i = 0; i < $scope.detalle.length; i++) {
-            $scope.itemsPendientes += ($scope.detalle[i].Cantidad - data.data[i].CantidadPicking);
+            $scope.itemsPendientes += ($scope.detalle[i].Cantidad - $scope.detalle[i].CantidadPicking);
           }
         }
       },"json").fail(function() {
@@ -299,7 +331,7 @@ angular.module('andes.controllers', [])
   $rootScope.pedidos = [];
   $rootScope.sacadores = [];
   $rootScope.emptyMessage = "";
-
+  $scope.popAdmin = null;
   // Start controller
 
   $ionicModal.fromTemplateUrl('templates/config.html', {
@@ -315,7 +347,6 @@ angular.module('andes.controllers', [])
 
 
   $scope.down = function() {
-
     $rootScope.segs--;
     if ($rootScope.segs > 0) {
       $rootScope.reloj = $timeout(function() {
@@ -325,6 +356,20 @@ angular.module('andes.controllers', [])
       $scope.refresh();    
     }
   }
+
+  $scope.cambiarSacador = function() {
+    $rootScope.readmode = -1;
+    $scope.popAdmin = $rootScope.ok("Lea el código de seguridad","Acceso administrador", function() {
+      $rootScope.readmode = 0;
+    }, "Cancelar");
+  };
+
+
+  $scope.$on('scanner', function(event, args) {
+    if ($rootScope.readmode == -1) {
+      $scope.popCloseable.close();
+    }
+  });
 
   $scope.refresh = function(isPullToDown) {
     if ($rootScope.refreshing == 1) {
@@ -355,9 +400,10 @@ angular.module('andes.controllers', [])
     }
   }
 
-  $scope.start = function() {
+  $scope.start = function(x) {
+    if (!x) { var x = 0; }
 
-    if (!$localStorage.sacador) {
+    if (!$localStorage.sacador || x == 1) {
       setTimeout(function() { 
         $scope.modalConfiguracion.show();
         $rootScope.showload();
