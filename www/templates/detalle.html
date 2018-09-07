@@ -10,7 +10,19 @@
     </div>
   </ion-header-bar>
   <ion-content class="pedido" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
-    <div class="list">
+    <div class="list" ng-if="calculatorActive == 1">
+        <h3>Ingrese cantidad y escanee articulo</h3>
+        <input 
+        class="custom_qty"
+        ng-model="$root.custom_qty" 
+        peanuthub-custom-keyboard 
+        keyboard-options="{keyboard:'CUSTOM_SKU', doneText: 'Ocultar', cleanTextOnClick: true, enableWAI:true, theme:'dark'}" 
+        keyboard-on-done-keypress="onCustomKeyboard" 
+        type="text" 
+        id="custom_qty_wc"
+        placeholder="" />
+    </div>
+    <div class="list" ng-if="calculatorActive == 0">
 
       <a class="card has-nothing item item-text-wrap" href="#" ng-if="detalle.length == 0">
         Pedido sin lineas, si está completado el picking presione terminar
@@ -39,10 +51,8 @@
             </div>
             <div class="row" ng-if="$root.sacador.NombreSacador != 'Oficina'">            
               <div class="col">
-            
                 <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
                 <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
-            
               </div>
             </div>
             

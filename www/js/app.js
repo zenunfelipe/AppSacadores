@@ -3,8 +3,9 @@ app = {
 };
 var printers = [];
 var popupwifi = null;
+var popupqty = null;
 var WifiWizard2 = null;
-angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
+angular.module('andes', ['ionic', 'andes.controllers','ngStorage','peanuthub-custom-keyboard'])
 
 .run(function($ionicPlatform, $rootScope, $ionicHistory, $timeout, $state, $localStorage, $ionicPopup, $ionicLoading) {
   $ionicPlatform.ready(function() {
@@ -38,6 +39,11 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
       StatusBar.styleDefault();
     }
   });
+
+  $rootScope.custom_qty = "1";
+  $rootScope.calculator = function() {
+    $rootScope.$broadcast("calculatorCelebrity", { data: {success: true} });
+  };
 
   $rootScope.showload = function(text) {
     $ionicLoading.show({
@@ -230,9 +236,25 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage'])
   }
 })
 
-.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
+.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider, $peanuthubCustomKeyboardProvider) {
 
   $ionicConfigProvider.backButton.previousTitleText(false).text('');
+
+  $peanuthubCustomKeyboardProvider.addCustomKeyboard('CUSTOM_SKU', {
+  keys: [
+   { type: "CHAR_KEY", value: "1" },
+   { type: "CHAR_KEY", value: "2", label: "" },
+   { type: "CHAR_KEY", value: "3", label: "" },
+   { type: "CHAR_KEY", value: "4" },
+   { type: "CHAR_KEY", value: "5" },
+   { type: "CHAR_KEY", value: "6" },
+   { type: "CHAR_KEY", value: "7" },
+   { type: "CHAR_KEY", value: "8" },
+   { type: "CHAR_KEY", value: "9" },
+   { type: "CHAR_KEY", value: "50" },
+   { type: "CHAR_KEY", value: "0" },
+   { type: "DELETE_KEY", icon: "ion-backspace-outline" }
+  ]});
 
   $stateProvider
 

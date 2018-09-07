@@ -6,6 +6,7 @@ angular.module('andes.controllers', [])
   $scope.pedido = $stateParams.pedido;
   $scope.detalle = [];
   $scope.itemsPendientes = 0;
+  $scope.calculatorActive = 0;
   $rootScope.notificaciones = 0;
   $scope.popCloseable = null;
   $scope.notificationlist = [];
@@ -13,6 +14,20 @@ angular.module('andes.controllers', [])
   $scope.readingNotification = 0;
   $scope.reading = { Linea: 0, LineaDetalle: 0 };
 
+  $scope.onCustomKeyboard = function(e) {
+    console.log(e);
+  }
+
+  $scope.$on("calculatorCelebrity", function(event, args) {
+    $rootScope.custom_qty = "1";
+    if ($scope.calculatorActive == 1) {
+      $scope.calculatorActive = 0;
+    }
+    else {
+      jQuery("#custom_qty_wc").click();
+      $scope.calculatorActive = 1;
+    }
+  });
 
   $scope.getNotificaciones = function() {
     jQuery.ajax({
@@ -113,10 +128,11 @@ angular.module('andes.controllers', [])
           AnnoProceso: $scope.pedido.AnnoProceso, 
           Correlativo: $scope.pedido.Correlativo, 
           CodigoBarras: args.data.data,
-          Cantidad: 1,
+          Cantidad: (parseInt($rootScope.custom_qty) || 1),
           IDUsuario: $rootScope.sacador.szUsuario
         }, function(data) {
           $rootScope.hideload();
+          $rootScope.custom_qty = "1";
           if (data.res == "ERR") {
             if (window.cordova) { navigator.notification.beep(1); }
             $rootScope.err(data.msg, function() {

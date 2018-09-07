@@ -8,7 +8,7 @@
       </ion-nav-buttons>
 
       <ion-nav-buttons side="right">
-        
+        <button class="button button-picking button-balanced icon ion-calculator header-qty" ng-if="$root.viendoDetalle == 1" ng-click="$root.calculator();"></button> 
         <button ng-click="openNotification();" class="button button-icon button-clear icon ion-chatbubble" ng-if="$root.viendoDetalle == 1"><div class="notification-bubble">{{$root.notificaciones}}</div></button>
       </ion-nav-buttons>
     </ion-nav-bar>
