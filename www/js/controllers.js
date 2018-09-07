@@ -24,7 +24,7 @@ angular.module('andes.controllers', [])
     if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
   });
   $scope.$on("custom-keyboard-hidding", function(event, args) {
-    if ($rootScope.custom_qty == "") {
+    if ($rootScope.custom_qty == "" || isNaN(parseInt($rootScope.custom_qty)) || $rootScope.custom_qty == 1) {
       jQuery("#custom_qty_wc").val(1);
       $rootScope.custom_qty = "1";
     } 
@@ -172,6 +172,8 @@ angular.module('andes.controllers', [])
     else if ($rootScope.readmode == 1) {
       console.log('delete mode');
       $scope.popCloseable.close();
+      $rootScope.custom_qty = "1";
+      jQuery("#custom_qty_wc").val(1);
       $scope.deleteItem(args.data.data, -1);
     }
   });
