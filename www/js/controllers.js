@@ -21,11 +21,14 @@ angular.module('andes.controllers', [])
 
   $scope.$on("custom-keyboard-showing", function(event, args) {
     $rootScope.custom_qty = "1";
+    if (window.cordova) { window.cordova.plugins.honeywell.disableTrigger(() => console.info('trigger disabled')); }
   });
   $scope.$on("custom-keyboard-hidding", function(event, args) {
     if ($rootScope.custom_qty == "") {
+      jQuery("#custom_qty_wc").val(1);
       $rootScope.custom_qty = "1";
     } 
+    if (window.cordova) { window.cordova.plugins.honeywell.enableTrigger(() => console.info('trigger enabled')); }
   });
   $scope.$on("calculatorCelebrity", function(event, args) {
     $rootScope.custom_qty = "1";
