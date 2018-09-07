@@ -281,12 +281,14 @@ ion-content.pedido {
 	margin-right: 20px;
 }
 .custom_qty {
+
 	border: 1px solid black !important;
-	padding: 10px !important;
-	font-size: 40px !important;
-	height: 62px !important;
+	padding: 0px !important;
+	font-size: 25px !important;
+	height: 36px !important;
 	text-align:center !important;
 	margin: auto;
-	margin-top: 20px;
-	width: 200px;
+	margin-top: 0px;
+	margin-right: 20px;
+	width: 70px;
 }

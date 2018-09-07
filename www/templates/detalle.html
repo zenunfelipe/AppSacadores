@@ -12,6 +12,7 @@
   <ion-content class="pedido" on-swipe-right="onSwipeRight($event)" on-swipe-left="onSwipeLeft($event)">
     <div class="list" ng-if="calculatorActive == 1">
         <h3>Ingrese cantidad y escanee articulo</h3>
+        <!--
         <input 
         class="custom_qty"
         ng-model="$root.custom_qty" 
@@ -21,6 +22,8 @@
         type="text" 
         id="custom_qty_wc"
         placeholder="" />
+        -->
+        <input id="custom_qty_wc" ng-model="$root.custom_qty" type="tel" name="custom_qty_wc" class="custom_qty" />
     </div>
     <div class="list" ng-if="calculatorActive == 0">
 

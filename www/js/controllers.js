@@ -16,15 +16,24 @@ angular.module('andes.controllers', [])
 
   $scope.onCustomKeyboard = function(e) {
     console.log(e);
+
   }
 
+  $scope.$on("custom-keyboard-showing", function(event, args) {
+    $rootScope.custom_qty = "1";
+  });
+  $scope.$on("custom-keyboard-hidding", function(event, args) {
+    if ($rootScope.custom_qty == "") {
+      $rootScope.custom_qty = "1";
+    } 
+  });
   $scope.$on("calculatorCelebrity", function(event, args) {
     $rootScope.custom_qty = "1";
     if ($scope.calculatorActive == 1) {
       $scope.calculatorActive = 0;
     }
     else {
-      jQuery("#custom_qty_wc").click();
+      jQuery("#custom_qty_wc").focus().select()
       $scope.calculatorActive = 1;
     }
   });
@@ -118,6 +127,7 @@ angular.module('andes.controllers', [])
   $scope.$on('scanner', function(event, args) {
     console.log('scanner reader');
     console.log(args);
+    jQuery("custom-keyboard-container").remove();
     if ($rootScope.readmode == 0) {
       console.log('read mode');
       if (args.hasOwnProperty("data") && args.data.success == true) {
@@ -133,6 +143,7 @@ angular.module('andes.controllers', [])
         }, function(data) {
           $rootScope.hideload();
           $rootScope.custom_qty = "1";
+          jQuery("#custom_qty_wc").val(1);
           if (data.res == "ERR") {
             if (window.cordova) { navigator.notification.beep(1); }
             $rootScope.err(data.msg, function() {

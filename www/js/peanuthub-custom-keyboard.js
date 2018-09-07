@@ -193,6 +193,7 @@ angular.module('peanuthub-custom-keyboard', [
                         // ANIMATION (SLIDE UP)
                         var keyboard = container.find("custom-keyboard");
                         keyboard.addClass(model.animation.slideDown);
+                        $rootScope.$broadcast("custom-keyboard-hidding", {});
                         var delay = $timeout(function() {
                             $timeout.cancel(delay);
 
@@ -203,7 +204,6 @@ angular.module('peanuthub-custom-keyboard', [
                             input_element.val(input_element.val());
                             input_element.triggerHandler("change");
                             input_element.attr("readonly", true);
-
                             defer.resolve();
 
                             //Fire Event Handler
@@ -252,6 +252,7 @@ angular.module('peanuthub-custom-keyboard', [
                                 }
                                 _firstKeyPressed = false;
                                 input_element.val(input_element.val() + item.value);
+                                $rootScope.custom_qty = input_element.val();
 
                                 break;
                             case "DELETE_KEY":
@@ -306,6 +307,7 @@ angular.module('peanuthub-custom-keyboard', [
                         //----------------------------------
                         // ANIMATION (SLIDE UP)
                         keyboard.addClass(model.animation.slideUp);
+                        $rootScope.$broadcast("custom-keyboard-showing", {});
                         var delay = $timeout(function() {
                             $timeout.cancel(delay);
 

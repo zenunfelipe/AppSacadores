@@ -42,7 +42,7 @@ angular.module('andes', ['ionic', 'andes.controllers','ngStorage','peanuthub-cus
 
   $rootScope.custom_qty = "1";
   $rootScope.calculator = function() {
-    $rootScope.$broadcast("calculatorCelebrity", { data: {success: true} });
+    //$rootScope.$broadcast("calculatorCelebrity", { data: {success: true} });
   };
 
   $rootScope.showload = function(text) {

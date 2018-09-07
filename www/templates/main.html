@@ -8,7 +8,18 @@
       </ion-nav-buttons>
 
       <ion-nav-buttons side="right">
-        <button class="button button-picking button-balanced icon ion-calculator header-qty" ng-if="$root.viendoDetalle == 1" ng-click="$root.calculator();"></button> 
+        <!--<button class="button button-picking button-balanced icon ion-calculator header-qty" ng-if="$root.viendoDetalle == 1" ng-click="$root.calculator();"></button> -->
+        <input 
+        ng-show="$root.viendoDetalle == 1"
+        class="custom_qty"
+        ng-model="$root.custom_qty" 
+        peanuthub-custom-keyboard 
+        keyboard-options="{keyboard:'CUSTOM_SKU', doneText: 'Ocultar', cleanTextOnClick: true, enableWAI:true, theme:'dark'}" 
+        keyboard-on-done-keypress="onCustomKeyboard" 
+        type="text" 
+        id="custom_qty_wc"
+        placeholder="" />
+
         <button ng-click="openNotification();" class="button button-icon button-clear icon ion-chatbubble" ng-if="$root.viendoDetalle == 1"><div class="notification-bubble">{{$root.notificaciones}}</div></button>
       </ion-nav-buttons>
     </ion-nav-bar>
