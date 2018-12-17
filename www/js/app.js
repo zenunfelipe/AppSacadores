@@ -1,5 +1,5 @@
 app = {
-  rest:  "http://186.67.74.115:8085/bodega"
+  rest:  "http://186.67.74.115:8050/bodega"
 };
 var printers = [];
 var popupwifi = null;

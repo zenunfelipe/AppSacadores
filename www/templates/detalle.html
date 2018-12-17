@@ -42,7 +42,7 @@
           </div>
           <div class="col-33">
             
-            <div class="row" ng-if="$root.sacador.NombreSacador == 'Oficina'">
+            <div class="row" ng-if="$root.sacador.NombreSacador == 'Oficina'"> 
               <div class="col-50">
                 <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
                 <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
@@ -52,7 +52,7 @@
               </div>
               
             </div>
-            <div class="row" ng-if="$root.sacador.NombreSacador != 'Oficina'">            
+            <div class="row" ng-if="$root.sacador.NombreSacador != 'Oficina'">
               <div class="col">
                 <span class="linea-head-info {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">llevas</span>
                 <span class="linea-cantidadpicking {{(linea.CantidadPicking < linea.Cantidad ? 'pending' : '')}}">{{linea.CantidadPicking}}</span>
