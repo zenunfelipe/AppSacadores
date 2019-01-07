@@ -1,6 +1,5 @@
 {
   "name": "SamsungCotizador",
-  "app_id": "",
   "integrations": {
     "cordova": {}
   },
