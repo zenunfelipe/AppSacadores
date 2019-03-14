@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.andes.ag" version="0.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>Andes</name>
+<widget id="com.andes.ag115" version="0.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>Andes 115</name>
   <description>
-        Andes
+        Andes 115
     </description>
   <author email="rosses@andesindustrial.cl" href="http://www.andesindustrial.cl/">
       TI Andes
